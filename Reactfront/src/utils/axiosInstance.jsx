@@ -2,7 +2,7 @@ import axios from 'axios'
 import authService from './authService'
 
 const axiosInstance = axios.create({
-  baseURL: 'django:8000/',
+  baseURL: 'django/',
   withCredentials: true
 })
 
