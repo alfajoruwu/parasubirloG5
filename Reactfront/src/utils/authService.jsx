@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import dayjs from 'dayjs'
 
-const API_URL = 'http://localhost:8000/token/'
+const API_URL = 'django:8000/token/'
 const REFRESH_URL = `${API_URL}refresh/`
 
 const login = async (run, password) => {
