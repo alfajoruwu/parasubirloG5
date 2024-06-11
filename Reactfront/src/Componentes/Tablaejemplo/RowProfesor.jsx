@@ -131,7 +131,7 @@ export default function Row ({ modulo }) {
       
       <TableRow className=' module-header table-row-margin' onClick={toggleModulo}>
         <TableCell className='primero container justify-content-center align-items-center d-flex'>{modulo.Asignatura}</TableCell>
-        <TableCell className='selector container'>
+        <TableCell className='selector '>
       <TextField
       
       type='number'
@@ -143,7 +143,7 @@ export default function Row ({ modulo }) {
       inputProps={{ min: 0 }} // Puedes agregar restricciones si es necesario
     />
 
-  </TableCell>
+        </TableCell>
 
         <TableCell className='demas container justify-content-center align-items-center d-flex'> {modulo.HorasTotales}</TableCell>
 

@@ -60,9 +60,11 @@ class PostulacionesView(viewsets.GenericViewSet):
             nuevo_estado = not instance.estado
             if nuevo_estado is False:
                 instance.estado = nuevo_estado
-                instance.save()
                 instance.postulante.horas_aceptadas -= instance.oferta.horas_ayudantia
+                instance.oferta.ayudante = None
                 instance.postulante.save()
+                instance.oferta.save()
+                instance.save()
                 return Response({"estado": instance.estado}, status=status.HTTP_200_OK)
 
             if (

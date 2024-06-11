@@ -92,7 +92,7 @@ const Resultados = () => {
 
     const ObtenerDatosHoras = async () => {
       try {
-        const response = await axios.get('HorasAceptadas/');
+        const response = await axiosInstance.get('HorasAceptadas/');
         console.log(response.data);
         
         sethoras(response.data.suma_horas_aceptadas !== null ? response.data.suma_horas_aceptadas : 0 );

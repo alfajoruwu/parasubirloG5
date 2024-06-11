@@ -34,6 +34,14 @@ const Postulantes = () => {
               if (response.data.estado) {
                 navigate('/VerPostulantes')
               }
+              else {
+                
+                //actualizar datos
+                axiosInstance.get('/Postulaciones/' + oferta + '/').then((response) => {
+                  setearRows(response.data)
+                })
+
+              }
             })
           }
         }
