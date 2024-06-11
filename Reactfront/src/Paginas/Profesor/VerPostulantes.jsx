@@ -21,7 +21,7 @@ const Postulantes = () => {
         HorasAsignadas: oferta.horas_ayudantia,
         Postulantes: oferta.postulantes,
         BotonPostulantes: {
-          estado: oferta.estado,
+          estado: oferta.ayudante? true: false,
           titulo: 'Ver Postulantes',
           funcion: () => {
             navigate(`/Postulantes/${oferta.id}`)

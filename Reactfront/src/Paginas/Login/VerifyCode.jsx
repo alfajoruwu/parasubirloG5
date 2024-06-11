@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../../utils/axiosInstance'
 import { DataContext } from '../../Datos/DataContext'
+import Login from './Login'
 
 export default function VerifyCode (props) {
   const [codigo, setCodigo] = useState('')
@@ -22,7 +23,9 @@ export default function VerifyCode (props) {
       .then((response) => {
         if (response.status === 201) {
           // Si el código es válido, redirige a la página deseada
-          navigate('/')
+          //recargar la pagina
+          console.log('Código válido')
+          window.location.reload()
         } else {
           // Manejar el caso en el que el código no sea válido
           console.log('Código inválido')

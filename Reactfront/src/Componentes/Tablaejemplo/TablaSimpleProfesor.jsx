@@ -32,10 +32,26 @@ export default function TablaSimple ({ rows, titulos }) {
               <TableRow key={row.id}>
                 {Object.keys(row).map((key) => {
                   if (key === 'id') return null
-                  if (key.startsWith('Boton')) {
-                    return (
-                      <TableCell key={key}>
-                        <button className='btn color-btn' onClick={() => row[key].funcion()}>{row[key].titulo}</button>
+                  if (key === 'BotonPostulantes') return (
+                  
+                    <TableCell key={key}>
+                        <button className= {  row[key].estado ? 'btn color-btn Activo': 'btn color-btn '}  onClick={() => row[key].funcion()}>{row[key].titulo}</button>
+                      </TableCell>
+
+                  )
+                  if (key === 'BotonSeleccionar') return (
+                    
+
+                    <TableCell key={key}>
+                        <button className= {  row[key].estado ? 'btn color-btn Activo': 'btn color-btn '}  onClick={() => row[key].funcion()}>{row[key].titulo}</button>
+                      </TableCell>
+
+                  )
+
+                    if (key.startsWith('Boton')) {
+                      return (
+                        <TableCell key={key}>
+                        <button className= { 'btn color-btn  '}  onClick={() => row[key].funcion()}>{row[key].titulo}</button>
                       </TableCell>
                     )
                   }
@@ -50,16 +66,17 @@ export default function TablaSimple ({ rows, titulos }) {
                   isFirstCell = false // Actualiza isFirstCell después de procesar el primer elemento
                   return (
                     <TableCell key={key}>
-                      <div className={cellClass}>{row[key]}</div>
+                    <div className={cellClass}>{row[key]}</div>
                     </TableCell>
                   )
                 })}
-              </TableRow>
-            )
-          })}
-        </TableBody>
-
-      </Table>
-    </TableContainer>
-  )
-}
+                </TableRow>
+              )
+            })}
+            </TableBody>
+            
+            </Table>
+            </TableContainer>
+          )
+        }
+        

@@ -17,7 +17,6 @@ class PostulacionesProfesorSerializer(
         ret["modulo"] = instance.oferta.modulo.__str__()
         ret["riesgo_academico"] = instance.postulante.riesgo_academico
         ret.pop("oferta")
-        ret.pop("estado")
         ret["horas"] = instance.oferta.horas_ayudantia
         ret["contacto"] = {
             "correo": instance.postulante.email,

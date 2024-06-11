@@ -1,9 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../App/App.css'
 import Navbar from '../../Componentes/navbar/NavbarMarcela'
-import { NavLink } from 'react-router-dom'
 import TablaCoordinador2 from '../../Componentes/Tablaejemplo/TablaCoordinador2'
-import Button from 'react-bootstrap/Button' // Importar Button de react-bootstrap
 import axiosInstance from '../../utils/axiosInstance'
 import { useState, useEffect } from 'react'
 
@@ -16,44 +14,31 @@ const Difusion = () => {
   const [profesorSeleccionado, setProfesorSeleccionado] = useState('Todos')
   const [estadoSeleccionado, setEstadoSeleccionado] = useState('Todos')
 
-  useEffect(() => {
-    const ObtenerDatos = async () => {
-      try {
-        console.log('xd')
-        const response = await axiosInstance.get('Ofertas/')
-        console.log(response.data)
-        const newData = response.data.map(item => ({
-          Estado: item.estado ? 'Publicado' : 'Pendiente',
-          Asignatura: item.modulo,
-          NombreProfesor: item.profesor,
-          HorasTotales: item.horas_ayudantia,
-
-          id: item.id
-        }))
-        setData(newData)
-
-        const modulosUnicos = ['Todos', ...new Set(newData.map(item => item.Asignatura))]
-        setModulos(modulosUnicos)
-        const profesoresUnicos = ['Todos', ...new Set(newData.map(item => item.NombreProfesor))]
-        setProfesores(profesoresUnicos)
-      } catch (error) {
-        console.log(error)
-        setError(error)
-      }
+  const obtenerDatos = async () => {
+    try {
+      const response = await axiosInstance.get('Ofertas/')
+      const newData = response.data.map(item => ({
+        Estado: item.estado ? 'Publicado' : 'Pendiente',
+        Asignatura: item.modulo,
+        NombreProfesor: item.profesor,
+        HorasTotales: item.horas_ayudantia,
+        id: item.id
+      }))
+      setData(newData)
+      setModulos(['Todos', ...new Set(newData.map(item => item.Asignatura))])
+      setProfesores(['Todos', ...new Set(newData.map(item => item.NombreProfesor))])
+    } catch (error) {
+      setError(error)
     }
+  }
 
-    ObtenerDatos()
+  useEffect(() => {
+    obtenerDatos()
   }, [])
 
-  const handleModuloSeleccionado = (modulo) => {
-    setModuloSeleccionado(modulo)
-  }
-  const handleProfesorSeleccionado = (profesor) => {
-    setProfesorSeleccionado(profesor)
-  }
-  const handleEstadoSeleccionado = (estado) => {
-    setEstadoSeleccionado(estado)
-  }
+  const handleModuloSeleccionado = (modulo) => setModuloSeleccionado(modulo)
+  const handleProfesorSeleccionado = (profesor) => setProfesorSeleccionado(profesor)
+  const handleEstadoSeleccionado = (estado) => setEstadoSeleccionado(estado)
 
   const titulos = {
     estado: 'Estado',
@@ -118,7 +103,7 @@ const Difusion = () => {
             </div>
           </div>
         </div>
-        <TablaCoordinador2 titulos={titulos} rows={rows} />
+        <TablaCoordinador2 titulos={titulos} rows={rows} actualizarDatos={obtenerDatos} />
         <div className='row justify-content-center mt-3' />
       </div>
     </div>
