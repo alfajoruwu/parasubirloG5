@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import {TableCell} from '@mui/material'
-import {TableRow} from '@mui/material'
+import { TableCell, TableRow } from '@mui/material'
+
 import '../../Paginas/App/App.css'
 
-import TextField from '@mui/material/TextField';
+import TextField from '@mui/material/TextField'
 import './Tabla.css'
 import './TablaSimplev2.css'
 import axiosInstance from '../../utils/axiosInstance'
-import TextareaAutosize from '@mui/material/TextareaAutosize';
+import TextareaAutosize from '@mui/material/TextareaAutosize'
 export default function Row ({ modulo }) {
   const [Nayudantes, setNayudantes] = useState(modulo.ofertas.length)
   const [ofertas, setOfertas] = useState(
@@ -30,6 +30,7 @@ export default function Row ({ modulo }) {
       if (oferta.horas_ayudantia === null || oferta.disponibilidad === '' || oferta.nota_mini === null || oferta.tareas === '') {
         return
       }
+      oferta.id = undefined
       axiosInstance.post('Ofertas/', {
         modulo: modulo.id,
         horas_ayudantia: oferta.horas_ayudantia,
@@ -128,97 +129,95 @@ export default function Row ({ modulo }) {
 
   return (
     <>
-      
+
       <TableRow className=' module-header table-row-margin' onClick={toggleModulo}>
         <TableCell className='primero container justify-content-center align-items-center d-flex'>{modulo.Asignatura}</TableCell>
         <TableCell className='selector '>
-      <TextField
-      
-      type='number'
-      value={Nayudantes}
-      onChange={(e) => setNayudantes(e.target.value)}
-      onClick={(e) => { e.stopPropagation() }}
-      variant="outlined"
-      size="small"
-      inputProps={{ min: 0 }} // Puedes agregar restricciones si es necesario
-    />
+          <TextField
+
+            type='number'
+            value={Nayudantes}
+            onChange={(e) => setNayudantes(e.target.value)}
+            onClick={(e) => { e.stopPropagation() }}
+            variant='outlined'
+            size='small'
+            inputProps={{ min: 0 }}
+          />
 
         </TableCell>
 
         <TableCell className='demas container justify-content-center align-items-center d-flex'> {modulo.HorasTotales}</TableCell>
 
-        <TableCell className=' '>  
-        <button className=' final btn color-btn'> Mas horas </button>
-          </TableCell>
+        <TableCell className=' '>
+          <button className=' final btn color-btn'> Mas horas </button>
+        </TableCell>
 
       </TableRow>
-
 
       {desplegarModulo && (
         <>
           {ofertas.map((oferta, index) => (
 
             <React.Fragment key={index}>
-              <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}  className='offer-header' onClick={() => toggleOferta(index)}>
-                <TableCell style={{backgroundColor:"#018d8d"}} className='medio primero container justify-content-center align-items-center d-flex'>Oferta para el ayudante {index + 1}</TableCell>
+              <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} className='offer-header' onClick={() => toggleOferta(index)}>
+                <TableCell style={{ backgroundColor: '#018d8d' }} className='medio primero container justify-content-center align-items-center d-flex'>Oferta para el ayudante {index + 1}</TableCell>
                 <TableCell />
                 <TableCell className='selector container'>
-                  <TextField type='number' value={oferta.horas_ayudantia} onChange={(e) => cambiarHoras(e.target.value, index)}onClick={(e) => { e.stopPropagation() }}variant="outlined"size="small"inputProps={{ min: 0 }} 
+                  <TextField
+                    type='number' value={oferta.horas_ayudantia} onChange={(e) => cambiarHoras(e.target.value, index)} onClick={(e) => { e.stopPropagation() }} variant='outlined' size='small' inputProps={{ min: 0 }}
                   />
                 </TableCell>
               </TableRow>
               {desplegarOferta[index] && (
                 <>
-                  <TableRow >
+                  <TableRow>
                     <TableCell className=''>
-                    <div className='container '>
-                      <div className='col interior interno' style={{ height: '6rem' }}>
-                        <div className='titulo container justify-content-center align-items-center d-flex'>Disponibilidad </div>
+                      <div className='container '>
+                        <div className='col interior interno' style={{ height: '6rem' }}>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>Disponibilidad </div>
 
-                        <div className='titulo container justify-content-center align-items-center'>
-                        <textarea className='textoarea' type='text' value={ofertas[index].disponibilidad} onChange={(e) => cambiarDisponibilidad(e, index)} />
-                        </div>
-                        
-                      </div>
-                    </div>
-                      
-                    </TableCell>
-                    <TableCell>
-                    <div className='container '>
-                      <div className='col interior ' style={{ height: '6rem' }}>
-                        <div className='titulo container justify-content-center align-items-center d-flex'>Nota minima</div>
-                        <div className='titulo container justify-content-center align-items-center d-flex'>  
-                        <TextField style={{backgroundColor:"white"}} type='number' value={ofertas[index].nota_mini} onChange={(e) => cambiarNota(e, index)}onClick={(e) => { e.stopPropagation() }}variant="outlined"size="small"inputProps={{ min: 0 }} />
-                       
+                          <div className='titulo container justify-content-center align-items-center'>
+                            <textarea className='textoarea' type='text' value={ofertas[index].disponibilidad} onChange={(e) => cambiarDisponibilidad(e, index)} />
+                          </div>
+
                         </div>
                       </div>
-                    </div>
+
+                    </TableCell>
+                    <TableCell>
+                      <div className='container '>
+                        <div className='col interior ' style={{ height: '6rem' }}>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>Nota minima</div>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>
+                            <TextField style={{ backgroundColor: 'white' }} type='number' value={ofertas[index].nota_mini} onChange={(e) => cambiarNota(e, index)} onClick={(e) => { e.stopPropagation() }} variant='outlined' size='small' inputProps={{ min: 0 }} />
+
+                          </div>
+                        </div>
+                      </div>
                     </TableCell>
 
                     <TableCell>
-                    <div className='container '>
-                      <div className='col interior' style={{ height: '6rem' }}>
-                        <div className='titulo container justify-content-center align-items-center d-flex'>Tareas</div>
-                        <div className='titulo container justify-content-center align-items-center d-flex'> 
-                        <textarea className='textoarea' type='text' value={ofertas[index].tareas} onChange={(e) => cambiarTareas(e, index)} />
-                         </div>
+                      <div className='container '>
+                        <div className='col interior' style={{ height: '6rem' }}>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>Tareas</div>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>
+                            <textarea className='textoarea' type='text' value={ofertas[index].tareas} onChange={(e) => cambiarTareas(e, index)} />
+                          </div>
+                        </div>
                       </div>
-                    </div>
                     </TableCell>
 
                     <TableCell>
 
-                    <div className='container '>
-                      <div className='col interior' style={{ height: '6rem' }}>
-                        <div className='titulo container justify-content-center align-items-center d-flex'>Otros</div>
-                        <div className='titulo container justify-content-center align-items-center d-flex'> 
-                        <textarea className='textoarea' type='text' value={ofertas[index].otros} onChange={(e) => cambiarOtros(e, index)} />
-                         </div>
+                      <div className='container '>
+                        <div className='col interior' style={{ height: '6rem' }}>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>Otros</div>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>
+                            <textarea className='textoarea' type='text' value={ofertas[index].otros} onChange={(e) => cambiarOtros(e, index)} />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    
-  
-                    
+
                     </TableCell>
                   </TableRow>
                 </>
