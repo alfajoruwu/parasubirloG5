@@ -1,0 +1,39 @@
+.custom-table {
+  border-collapse: collapse;
+}
+
+.custom-table th, .custom-table td {
+  border: none;
+  padding: 0.3rem;
+}
+
+.custom-table th {
+  color: #1ECCCC ;
+  font-weight: bold; /* Opcional: para hacer el texto del encabezado en negrita */
+}
+
+.primero{
+    background-color: #1ECCCC;
+    margin-top: 1rem !important;
+    color: white !important;
+    height: 3rem !important;
+    margin-bottom: 1rem ;
+    border-radius: 0.3rem;
+}
+
+.selector{
+  margin-bottom: 3rem !important;
+}
+
+.extra{
+  width: 25rem;
+}
+
+.demas{
+    background-color: #DBE3E3;
+    border-radius: 0.3rem;
+    margin-bottom: 1rem ;
+    margin-top: 1rem !important;
+    height: 3rem;
+}
+
