@@ -2,7 +2,7 @@ import axios from 'axios'
 import authService from './authService'
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8000/',
+  baseURL: 'http://35.232.101.19:8000/',
   withCredentials: true
 })
 

@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import dayjs from 'dayjs'
 
-const API_URL = 'http://localhost:8000/token/'
+const API_URL = 'http://35.232.101.19:8000/token/'
 const REFRESH_URL = `${API_URL}refresh/`
 
 let isRrefreshing = false
