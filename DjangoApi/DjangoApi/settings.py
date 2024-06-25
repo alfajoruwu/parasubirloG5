@@ -46,6 +46,9 @@ CORS_ALLOWED_ORIGINS = [
 
 ]
 
+SESSION_COOKIE_SECURE = False  # Puedes desactivarlo en desarrollo
+CSRF_COOKIE_SECURE = False  # Puedes desactivarlo en desarrollo
+
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
