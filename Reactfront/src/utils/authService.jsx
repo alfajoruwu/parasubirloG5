@@ -31,8 +31,8 @@ const logout = () => {
 }
 
 const setTokens = (accessToken, refreshToken) => {
-  Cookies.set('access_token', accessToken, { secure: true, sameSite: 'Strict' })
-  Cookies.set('refresh_token', refreshToken, { secure: true, sameSite: 'Strict' })
+  Cookies.set('access_token', accessToken, { secure: false, sameSite: 'Strict' })
+  Cookies.set('refresh_token', refreshToken, { secure: false, sameSite: 'Strict' })
 }
 
 const getAccessToken = () => {
