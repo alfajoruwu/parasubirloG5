@@ -17,6 +17,8 @@ import InfAlumno from '../Paginas/Coordinador/AyudantesPag/InfAlumno'
 import DatosCuenta from '../Paginas/Coordinador/AyudantesPag/DatosCuenta'
 import Extras from '../Paginas/Coordinador/AyudantesPag/Extras'
 import ListaProfesores from '../Paginas/Coordinador/ListaProfesores'
+import PasswordReset from '../Paginas/Login/PasswordReset'
+import PasswordResetRequest from '../Paginas/Login/ResetRequest'
 
 export const Rutas = () => {
   return (
@@ -44,6 +46,9 @@ export const Rutas = () => {
         <Route path='/Resultados' element={<Resultados />} />
         <Route path='/DatosPersonales' element={<DatosPersonales />} />
 
+        {/* Reseteo de contraseña */}
+        <Route path='/reset/:uid/:token' element={<PasswordReset />} />
+        <Route path='/password_request' element={<PasswordResetRequest />} />
       </Routes>
     </Router>
   )

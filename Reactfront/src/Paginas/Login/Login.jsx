@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import NavbarLogin from '../../Componentes/navbar/NavbarLogin'
 import './Login.css'
 import axiosInstance from '../../utils/axiosInstance'
@@ -104,7 +104,7 @@ export default function Login (props) {
                   </button>
                 </div>
                 <p className='text-center mt-2'>
-                  ¿Olvidaste tu contraseña? <span className='link-custom'>Que peña</span>
+                  ¿Olvidaste tu contraseña? <Link to='/password_request' className='link-custom'>Recuperar</Link>
                 </p>
               </div>
             </form>

@@ -24,6 +24,8 @@ EMAIL_HOST_USER = "ayudantias.soporte@gmail.com"
 EMAIL_HOST_PASSWORD = "clli lrsp vyuj ulck"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+FRONTEND_URL = "http://localhost:5173"  # URL del frontend para enviar correos
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 
@@ -36,9 +38,7 @@ SECRET_KEY = "dsñfksldkfñlskd"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-     '*'  
-]
+ALLOWED_HOSTS = ["*"]
 
 
 CORS_ALLOW_ALL_ORIGINS = True
