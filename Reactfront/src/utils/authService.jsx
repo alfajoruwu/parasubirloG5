@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import dayjs from 'dayjs'
 
-const API_URL = 'http://localhost:8000/token/'
+const API_URL = 'http://34.176.241.128:8000/token/'
 const REFRESH_URL = `${API_URL}refresh/`
 
 let isRrefreshing = false
@@ -31,8 +31,8 @@ const logout = () => {
 }
 
 const setTokens = (accessToken, refreshToken) => {
-  Cookies.set('access_token', accessToken, { secure: true, sameSite: 'Strict' })
-  Cookies.set('refresh_token', refreshToken, { secure: true, sameSite: 'Strict' })
+  Cookies.set('access_token', accessToken, { secure: false, sameSite: 'Strict' })
+  Cookies.set('refresh_token', refreshToken, { secure: false, sameSite: 'Strict' })
 }
 
 const getAccessToken = () => {
