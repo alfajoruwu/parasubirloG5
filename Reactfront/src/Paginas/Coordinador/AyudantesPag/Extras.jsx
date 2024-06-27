@@ -17,7 +17,7 @@ import FiltroResolucion from '../../../Componentes/Filtros/FIltroResolucion'
 import Busqueda from '../../../Componentes/Filtros/Busqueda'
 
 const Extras = () => {
-  const titulos = ['Resolución', 'Nombre', 'RUN', 'Charla de genero', 'Fecha inicio', 'Fecha termino', 'Riesgo academico']
+  const titulos = ['Proceso', 'Nombre', 'RUN', 'Charla de género', 'Fecha inicio', 'Fecha término', 'Riesgo académico']
 
   const [rows2, setRows] = useState([])
   const [loading, setLoading] = useState(true)
@@ -39,7 +39,7 @@ const Extras = () => {
             Charla: row.charla == true ? 'Sí' : 'No',
             fechaInicio: row.fecha_inicio,
             fechaFin: row.fecha_termino,
-            Riesgo: row.riesgo_academico == true ? 'Sí' : 'No'
+            Riesgo: row.riesgo_academico == true ? 'Sí' : 'No',
           }
         })
         setRows(rows)

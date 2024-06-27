@@ -145,7 +145,9 @@ const Difusion = () => {
             handleFechaSeleccionada={handleFechaSeleccionada}
           />
         </div>
-        <button className='btn btn-danger mb-3' onClick={cambiarEstado}>Despublicar ofertas en pantalla</button>
+        <div className='d-flex mb-3'>
+          <button className='btn btn-danger ms-auto' onClick={cambiarEstado}>Despublicar ofertas en pantalla</button>
+        </div>
         <TablaCoordinador2 titulos={titulos} rows={filteredData} actualizarDatos={obtenerDatos} />
         <div className='row justify-content-center mt-3' />
         <ToastContainer />

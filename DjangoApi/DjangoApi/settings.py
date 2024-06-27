@@ -40,15 +40,6 @@ ALLOWED_HOSTS = [
      '*'  
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://35.184.97.134',  # Agrega aquí tu origen específico si es necesario
-    'http://35.184.97.134:8000',  # Agrega aquí tu origen específico si es necesario
-
-]
-
-SESSION_COOKIE_SECURE = False  # Puedes desactivarlo en desarrollo
-CSRF_COOKIE_SECURE = False  # Puedes desactivarlo en desarrollo
-
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True

@@ -60,7 +60,6 @@ class CustomUserChangeForm(UserChangeForm):
             "n_cuenta",
             "banco",
             "n_contacto",
-            "horas_aceptadas",
             "riesgo_academico",
             "charla",
         ]

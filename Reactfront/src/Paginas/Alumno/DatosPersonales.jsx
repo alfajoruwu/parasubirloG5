@@ -65,7 +65,7 @@ const DatosPersonales = () => {
           n_contacto: NContacto,
           riesgo_academico: riesgo,
           charla: charlagenero,
-          Promedio:Promedio,
+          Promedio
         }
       )
 
@@ -106,7 +106,7 @@ const DatosPersonales = () => {
               <div className='row'>
 
                 <div className='col-6'>
-                  <h6 className='letra'>Estoy en riesgo academico</h6>
+                  <h6 className='letra'>Estoy en riesgo académico</h6>
                   <div className='linea' />
                 </div>
 
@@ -120,7 +120,7 @@ const DatosPersonales = () => {
               <div className='row' style={{ marginTop: '1rem' }}>
 
                 <div className='col-6'>
-                  <h6 className='letra'>Realice la charla de genero</h6>
+                  <h6 className='letra'>Realicé la charla de género</h6>
                   <div className='linea' />
                 </div>
 
@@ -142,7 +142,7 @@ const DatosPersonales = () => {
               <div className='row'>
 
                 <div className='col-3'>
-                  <h6 className='letra'>Matricula</h6>
+                  <h6 className='letra'>Matrícula</h6>
                   <div className='linea' />
                 </div>
 

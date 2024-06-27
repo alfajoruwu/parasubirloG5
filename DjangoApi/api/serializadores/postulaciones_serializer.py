@@ -39,7 +39,7 @@ class PostulacionesCoordinadorSerializer(
         ret["run_postulante"] = instance.postulante.run
         ret["modulo"] = instance.oferta.modulo.__str__()
         ret["naprobacion"] = instance.nota_aprobacion
-        ret["promedio"] = instance.promedio
+        ret["promedio"] = instance.postulante.Promedio
         ret["ncontacto"] = instance.postulante.n_contacto
         ret["correo"] = instance.postulante.email
         ret["banco"] = instance.postulante.banco
@@ -53,11 +53,14 @@ class PostulacionesCoordinadorSerializer(
             ret["pago_mensual"] = (
                 instance.oferta.resolucion.precio * instance.oferta.horas_ayudantia
             )
+            ret["fecha_inicio"] = instance.oferta.resolucion.f_inicio
+            ret["fecha_termino"] = instance.oferta.resolucion.f_termino
         else:
             ret["cantidad_meses"] = None
             ret["pago_mensual"] = None
+            ret["fecha_inicio"] = None
+            ret["fecha_termino"] = None
         ret["charla"] = instance.postulante.charla
-
         ret["riesgo_academico"] = instance.postulante.riesgo_academico
         ret["id_oferta"] = instance.oferta.id
         ret.pop("oferta")

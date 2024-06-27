@@ -15,7 +15,7 @@ import FiltroResolucion from '../../../Componentes/Filtros/FIltroResolucion'
 import Busqueda from '../../../Componentes/Filtros/Busqueda'
 
 const InfAlumno = () => {
-  const titulos = ['Resolución', 'Nombre', 'RUN', 'Módulo', 'Nota aprobación', 'Promedio', 'N° contacto', 'Correo']
+  const titulos = ['Proceso', 'Nombre', 'RUN', 'Módulo', 'Nota aprobación', 'Promedio', 'N° contacto', 'Correo']
 
   const [rows2, setRows] = useState([])
   const [loading, setLoading] = useState(true)

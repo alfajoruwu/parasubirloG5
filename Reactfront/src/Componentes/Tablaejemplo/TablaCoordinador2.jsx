@@ -11,17 +11,38 @@ import Paper from '@mui/material/Paper'
 import './Tabla.css'
 import './TablaSimplev2.css'
 import axiosInstance from '../../utils/axiosInstance'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { useState } from 'react'
+import { Modal, Button } from 'react-bootstrap'
 
-function Row (props) {
+function Row(props) {
   const { row, rowIndex, data, actualizarDatos } = props
   const [open, setOpen] = React.useState(false)
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+  const [comentario, setComentario] = useState('');
+
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = () => setShowModal(true);
+
+  const handleSaveChanges = () => {
+    if (comentario) {
+      LlenarDatos(comentario, row.id, row.Asignatura);
+      handleCloseModal();
+    } else {
+      AlertaError();
+    }
+  };
 
   const AlertaError = () => {
     alert('Comentario vacío')
   }
 
   const AlertaExito = (nombre_ramo) => {
-    alert('Se realizó correctamente la postulación de "' + nombre_ramo + '"')
+  
+    toast.success('Se realizó correctamente el comentario a "' + nombre_ramo + '"', { position: 'bottom-right' })
   }
 
   const LlenarDatos = async (comentario, id_oferta, asignatura) => {
@@ -42,20 +63,17 @@ function Row (props) {
       await axiosInstance.patch(`Ofertas/${id_oferta}/`, {
         estado: true
       })
-      alert("Se publicó la ayudantía")
+      toast.success('Estado actualizado correctamente', { position: 'bottom-right' })
+      
       actualizarDatos()
     } catch (error) {
       console.error('Error al enviar la solicitud:', error)
     }
   }
 
-  const ObtenerValores = async (rowIndex, row) => {
-    const comentario = prompt(`Ingrese una observación para ${row.Asignatura} del profesor: ${row.NombreProfesor} y de la ayudantía de: ${row.HorasTotales} horas.`)
-    if (comentario) {
-      LlenarDatos(comentario, row.id, row.Asignatura)
-    } else {
-      AlertaError()
-    }
+  const ObtenerValores = (rowIndex, row) => {
+    setModalContent(`Ingrese una observación para ${row.Asignatura} del profesor: ${row.NombreProfesor} y de la ayudantía de: ${row.HorasTotales} horas.`);
+    handleShowModal();
   }
 
   const ObtenerValores2 = async (rowIndex, row) => {
@@ -75,10 +93,10 @@ function Row (props) {
           )
         ))}
         <TableCell>
-          <button className='btn color-btn' onClick={(e) => { e.stopPropagation(); ObtenerValores(rowIndex, row) }}>Observaciones</button>
+          <button className='btn color-btn' onClick={(e) => { e.stopPropagation(); ObtenerValores(rowIndex, row); }}>Observaciones</button>
         </TableCell>
         <TableCell>
-          <button className='btn color-btn' onClick={(e) => { e.stopPropagation(); ObtenerValores2(rowIndex, row) }}>Publicar</button>
+          <button className='btn color-btn' onClick={(e) => { e.stopPropagation(); ObtenerValores2(rowIndex, row); }}>Publicar</button>
         </TableCell>
       </TableRow>
       <TableRow>
@@ -91,7 +109,7 @@ function Row (props) {
                     <div className='container interior'>
                       <div className='col'>
                         <div className='titulo container justify-content-center align-items-center d-flex'>Disponibilidad</div>
-                        <div>{data.find(item => item.id === row.id)?.disponibilidad}</div>
+                        <div>{data.find((item) => item.id === row.id)?.disponibilidad}</div>
                       </div>
                     </div>
                   </TableCell>
@@ -99,7 +117,7 @@ function Row (props) {
                     <div className='container interior'>
                       <div className='col'>
                         <div className='titulo container justify-content-center align-items-center d-flex'>Nota mínima</div>
-                        <div>{data.find(item => item.id === row.id)?.nota_minima}</div>
+                        <div>{data.find((item) => item.id === row.id)?.nota_minima}</div>
                       </div>
                     </div>
                   </TableCell>
@@ -107,7 +125,7 @@ function Row (props) {
                     <div className='container interior'>
                       <div className='col'>
                         <div className='titulo container justify-content-center align-items-center d-flex'>Tareas</div>
-                        <div>{data.find(item => item.id === row.id)?.tareas}</div>
+                        <div>{data.find((item) => item.id === row.id)?.tareas}</div>
                       </div>
                     </div>
                   </TableCell>
@@ -115,7 +133,7 @@ function Row (props) {
                     <div className='container'>
                       <div className='col interior'>
                         <div className='titulo container justify-content-center align-items-center d-flex'>Otros</div>
-                        <div>{data.find(item => item.id === row.id)?.otros}</div>
+                        <div>{data.find((item) => item.id === row.id)?.otros}</div>
                       </div>
                     </div>
                   </TableCell>
@@ -123,7 +141,7 @@ function Row (props) {
                     <div className='container'>
                       <div className='col interior'>
                         <div className='titulo container justify-content-center align-items-center d-flex'>Observación</div>
-                        <div>{data.find(item => item.id === row.id)?.observaciones}</div>
+                        <div>{data.find((item) => item.id === row.id)?.observaciones}</div>
                       </div>
                     </div>
                   </TableCell>
@@ -133,8 +151,31 @@ function Row (props) {
           </Collapse>
         </TableCell>
       </TableRow>
+
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title><strong>Observaciones</strong></Modal.Title>
+        </Modal.Header>
+        
+        <Modal.Body>{modalContent}</Modal.Body>
+        <Modal.Body>
+          <textarea
+            value={comentario}
+            onChange={(e) => setComentario(e.target.value)}
+            style={{ width: '100%', height: '5rem', resize: 'none', padding: '5px', fontSize: '0.9rem', border: '1px solid #1ECCCC', borderRadius: '5px' }}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='secondary' onClick={handleCloseModal}>
+            Cerrar
+          </Button>
+          <Button variant='primary' onClick={handleSaveChanges}>
+            Guardar cambios
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
-  )
+  );
 }
 
 export default function TablaAlumno ({ rows, titulos, actualizarDatos }) {

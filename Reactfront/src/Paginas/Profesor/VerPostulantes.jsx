@@ -90,13 +90,6 @@ const Postulantes = () => {
           <FiltroSemestre semestres={['Todos', ...semestres]} semestreSeleccionado={semestreSeleccionado} handleSemestreSeleccionado={handleSemestreChange} />
         </div>
         <TablaSimple rows={filteredData} titulos={titulos} />
-
-        <div className='row'>
-          <NavLink to='/' className='btn color-btn'>
-            {' '}
-            Salir{' '}
-          </NavLink>
-        </div>
       </div>
     </div>
   )

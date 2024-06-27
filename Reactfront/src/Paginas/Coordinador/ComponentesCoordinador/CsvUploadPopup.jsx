@@ -92,7 +92,7 @@ const CsvUploadPopup = ({ show, onClose, updateModules }) => {
   return (
     <Modal show={show} onHide={onClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Subir archivo CSV</Modal.Title>
+        <Modal.Title>Subir archivo Excel</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {error && <Alert variant='danger'>{error}</Alert>}

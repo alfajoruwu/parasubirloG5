@@ -22,8 +22,8 @@ export default function TablaSimplev2 ({ rows, titulos, onDropdownChange, onHora
       <Table className='custom-table'>
         <TableHead>
           <TableRow>
-            {titulos.map((titulo) => (
-              <TableCell key={titulo}>
+            {titulos.map((titulo, index) => (
+              <TableCell key={index}>
                 {titulo !== ''
                   ? (
                     <>
@@ -51,7 +51,7 @@ export default function TablaSimplev2 ({ rows, titulos, onDropdownChange, onHora
                   if (key.startsWith('Boton')) {
                     return (
                       <TableCell key={key}>
-                        {(row.PagoMensual === 'No asignado') ? <button className='btn color-btn' onClick={() => row[key].funcion()}>{row[key].titulo}</button> : <button className='btn color-btn desasignarProceso' onClick={() => row[key].funcion()}>{row[key].titulo2}</button>}
+                        <button className='btn color-btn' onClick={() => row[key].funcion()}>{row[key].titulo}</button>
                       </TableCell>
                     )
                   }

@@ -1,4 +1,3 @@
-from typing import Iterable
 from django.db import models
 
 from usuarios.models import User
@@ -26,7 +25,7 @@ class Modulo(models.Model):
                 fields=["nombre", "seccion", "anio", "semestre"], name="unique_modulo"
             )
         ]
-    
+
     def clean(self):
         # Validar que las horas asignadas sean mayores a 0
         if self.horas_asignadas <= 0:
@@ -43,10 +42,10 @@ class Modulo(models.Model):
         # Validar que la sección no sea vacía
         if self.seccion == "":
             raise ValidationError("La sección no puede ser vacía")
-        
-        
+        if self.profesor_asignado is None:
+            Oferta.objects.filter(modulo=self).delete()
 
-    def save (self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
 
@@ -73,7 +72,7 @@ class Oferta(models.Model):
         models.IntegerField()
     )  # horas de ayudantia asignadas al estudiante
     observaciones = models.CharField(max_length=500, blank=True)
-    fecha_creacion = models.DateField(auto_now_add=True) 
+    fecha_creacion = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"oferta {self.id} al {self.modulo}"
@@ -97,6 +96,32 @@ class Postulacion(models.Model):
 
     def __str__(self):
         return f"postulacion de {self.postulante.nombre_completo} a la oferta {self.oferta}"
+
+    def clean(self):
+        # Validar que la nota de aprobación sea mayor o igual a 1.0
+        if self.nota_aprobacion < 1.0:
+            raise ValidationError("La nota de aprobación debe ser mayor o igual a 1.0")
+        # Validar que la nota de aprobación sea menor o igual a 7.0
+        if self.nota_aprobacion > 7.0:
+            raise ValidationError("La nota de aprobación debe ser menor o igual a 7.0")
+        # Validar que el promedio sea mayor o igual a 1.0
+        if self.promedio < 1.0:
+            raise ValidationError("El promedio debe ser mayor o igual a 1.0")
+        # Validar que el promedio sea menor o igual a 7.0
+        if self.promedio > 7.0:
+            raise ValidationError("El promedio debe ser menor o igual a 7.0")
+        # Validar que no postule a una oferta 2 veces
+        if Postulacion.objects.filter(
+            postulante=self.postulante, oferta=self.oferta
+        ).exists():
+            raise ValidationError("No puedes postular a una oferta 2 veces")
+        # Validar que la oferta este aceptada por el coordinador
+        if self.oferta.estado:  # no deberia pasar
+            raise ValidationError("No puedes postular en este momento")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 
 # clase Resolucion

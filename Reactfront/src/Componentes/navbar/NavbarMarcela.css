@@ -1,6 +1,7 @@
 .custom-navbar-color {
     background-color: #ffffff;
     height: 5rem;
+    position: relative; /* Para centrar el título con position: absolute */
 }
 
 .boton-seleccionado {
@@ -45,4 +46,13 @@
 .nav-link:hover, .nav-link.active {
     background-color: rgba(217, 226, 228, 0.5);
     border-radius: 5px;
+}
+
+.navbar-title {
+    font-size: 2rem; /* Aumenta el tamaño de la letra */
+    font-weight: bold;
+    color: #1ecccc;
+    position: absolute; /* Centrado */
+    left: 50%; /* Centrado */
+    transform: translateX(-50%); /* Centrado */
 }

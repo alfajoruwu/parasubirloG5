@@ -8,12 +8,10 @@ import { FiltroYear, FiltroSemestre } from '../../Componentes/Filtros/FiltroSeme
 
 const PublicarAyudantias = () => {
   const titulos = {
-  
-    Asignatura: 'Asignatura',
+    Asignatura: 'Módulo',
     Nayudantes: 'N° Ayudantes',
     HorasTotales: 'Horas a repartir',
-    Vacio: 'Solicitar horas',
- 
+    Vacio: 'Solicitar horas'
 
   }
 

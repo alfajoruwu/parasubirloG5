@@ -13,6 +13,10 @@ import './TablaSimplev2.css'
 // import axios from 'axios';
 import axiosInstance from '../../utils/axiosInstance'
 
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
+
 function Row (props) {
   const { row, rowIndex, data } = props
   // Este estado se utiliza para controlar el Collapse de la primera fila.
@@ -29,15 +33,19 @@ function Row (props) {
   const [Comentario, SetComentario] = React.useState('Sin comentarios')
 
   const AlertaError = () => {
-    alert('Falta completar datos')
+  
+    toast.error('Error, falta completar datos', { position: 'bottom-right' })
+
   }
 
   const AlertaExito = (nombre_ramo) => {
-    alert('se realizo correctamente la postulacion de "' + nombre_ramo + '"')
+    
+    toast.success('se realizo correctamente la postulacion de "' + nombre_ramo + '"', { position: 'bottom-right' })
   }
 
   const LlenarDatos = async (comentario, nota_aprobacion, id_oferta, postulante, asignatura) => {
     try {
+      console.log(postulante)
       const response = await axiosInstance.post('Postulaciones/', {
         comentario,
         nota_aprobacion,
@@ -66,8 +74,12 @@ function Row (props) {
 
       // LlenarDatos()
     } catch (error) {
-      AlertaError()
-      console.log('comentario vacio')
+      toast.error('Error, falta completar datos', { position: 'bottom-right' })
+
+
+      
+      
+        
     }
   }
 
@@ -95,13 +107,30 @@ function Row (props) {
         ))}
 
         <TableCell>
-          <input name={rowIndex + 'Nota'} onClick={(e) => { e.stopPropagation() }} placeholder='Nota aprobacion' />
+          <input   type="number"
+           style={{ 
+              height: '3rem', 
+              width: '95%', 
+              padding: '5px', 
+              fontSize: '0.9rem', 
+              border: '1px solid #1ECCCC', 
+            borderRadius: '5px' 
+           }}  name={rowIndex + 'Nota'}  onClick={(e) => { e.stopPropagation() }} placeholder='Nota aprobacion' />
+        </TableCell>
+
+        <TableCell>
+        <textarea
+          name={rowIndex + 'Comentario'}
+          style={{ height: '4rem', resize: 'none', width: '95%', padding: '5px', fontSize: '0.9rem', border: '1px solid #1ECCCC', borderRadius: '5px' }}
+          onClick={(e) => { e.stopPropagation() }} 
+          placeholder='comentario'
+          />
         </TableCell>
 
         <TableCell>
           <button className='btn color-btn' onClick={(e) => { e.stopPropagation(); ObtenerValores(rowIndex, row) }}>Postular</button>
-
         </TableCell>
+
 
       </TableRow>
 
@@ -148,22 +177,6 @@ function Row (props) {
                     </div>
                   </TableCell>
 
-                  <TableCell>
-                    <div className='container interior'>
-                      <div className='col ' style={{ height: '7rem' }}>
-                        <div className='titulo container'>
-                          Comentario Opcional
-                        </div>
-                        <div className='row'>
-                          <textarea
-                            name={rowIndex + 'Comentario'}
-                            style={{ height: '5rem', resize: 'none', width: '95%', padding: '5px', fontSize: '0.9rem', border: '1px solid #1ECCCC', borderRadius: '5px' }}
-                          />
-                        </div>
-
-                      </div>
-                    </div>
-                  </TableCell>
 
                 </TableBody>
               </Table>

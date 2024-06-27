@@ -7,7 +7,6 @@ import TablaSimplev2 from '../../Componentes/Tablaejemplo/TablaSimplev2'
 import '../App/App.css'
 import Navbar from '../../Componentes/navbar/NavbarMarcela'
 import axiosInstance from '../../utils/axiosInstance'
-import exportToExcel from './ComponentesCoordinador/ExportExcel'
 
 const ProfesorList = () => {
   const [profesores, setProfesores] = useState([])
@@ -90,20 +89,12 @@ const ProfesorList = () => {
     id: profesor.id
   }))
 
-  const exportData = () => {
-    exportToExcel(profesores.map(profesor => ({
-      'Nombre del profesor': profesor.nombre_completo,
-      Email: profesor.email
-    })), 'profesores.xlsx', 'Profesores')
-  }
-
   return (
     <div className='principal'>
       <Navbar />
       <div className='container Componente'>
         <div className='row mb-3'>
           <div className='col-md-12 text-end'>
-            <Button className='btn color-btn' onClick={() => exportData()}>Exportar a Excel</Button>
             <Button className='btn color-btn' onClick={() => setShowModal(true)}>Crear Profesor</Button>
           </div>
         </div>

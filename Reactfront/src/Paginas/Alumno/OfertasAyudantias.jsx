@@ -7,11 +7,16 @@ import React, { useState, useEffect } from 'react'
 import axiosInstance from '../../utils/axiosInstance'
 import FiltroModulo from '../../Componentes/Filtros/FiltroModulo'
 
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
+
 const titulos = {
-  Asignatura: 'Asignatura',
+  Asignatura: 'Módulo',
   NombreProfesor: 'Nombre profesor',
   HorasTotales: 'Horas totales',
-  Nota: 'Nota de aprobacion',
+  Nota: 'Nota de aprobación',
+  Comentario:'Comentario',
   '': 'Postular'
 }
 
@@ -127,6 +132,7 @@ const OfertasAyudantias = () => {
           : (
             <TablaAlumno titulos={titulos} rows={filteredData} />
             )}
+            <ToastContainer />
       </div>
     </div>
   )

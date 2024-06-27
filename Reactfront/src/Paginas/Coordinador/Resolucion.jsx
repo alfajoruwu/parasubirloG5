@@ -11,6 +11,7 @@ import axiosInstance from '../../utils/axiosInstance'
 import '../../Componentes/Spinner.css'
 import exportToExcel from './ComponentesCoordinador/ExportExcel'
 import FiltroResolucion from '../../Componentes/Filtros/FIltroResolucion'
+import FiltroFecha from '../../Componentes/Filtros/FiltroFecha'
 
 const Resolucion = () => {
   const getCurrentDate = () => {
@@ -20,7 +21,7 @@ const Resolucion = () => {
     const day = String(today.getDate()).padStart(2, '0')
     return `${year}-${month}-${day}`
   }
-  const titulos = ['Módulo', 'Nombre', 'RUN', 'Cantidad Mes', 'Horas Mensuales', 'Pago Mensual', 'Proceso']
+  const titulos = ['Módulo', 'Nombre', 'RUN', 'N° Meses', 'Horas Mensuales', 'Pago Mensual', 'Proceso', 'Fecha de postulación']
   const [loading, setLoading] = useState(false)
   const [rows, setRows] = useState([])
   const [showModal, setShowModal] = useState(false)
@@ -29,6 +30,8 @@ const Resolucion = () => {
   const [procesoSeleccionado, setProcesoSeleccionado] = useState('Todos')
   const [resolucion, setResolucion] = useState([])
   const [filtroResolucion, setFiltroResolucion] = useState('Todos')
+  const [fechaInicio, setFechaInicio] = useState(null)
+  const [fechaFin, setFechaFin] = useState(null)
 
   // Referencias que le paso a la tablaSimplev2 (no se si es la mejor forma de hacerlo pero funciona)
   const procesoSeleccionadoRef = useRef(procesoSeleccionado)
@@ -61,9 +64,10 @@ const Resolucion = () => {
           PagoMensual: row.pago_mensual ? `$${row.pago_mensual}` : 'No asignado',
           Proceso: row.resolucion ? row.resolucion : 'No asignado',
           id: row.id_oferta,
+          FechaPostulacion: row.fecha_postulacion,
           BotonSeleccionarProceso: {
-            titulo: 'Asignar periodo',
-            titulo2: 'Cambiar periodo',
+            titulo: 'Asignar proceso',
+            titulo2: 'Cambiar proceso',
             funcion: () => {
               asignarPeriodo(row.id_oferta)
             }
@@ -81,7 +85,7 @@ const Resolucion = () => {
   const asignarPeriodo = async (seleccionado) => {
     const procesoSeleccionado = procesoSeleccionadoRef.current
     if (procesoSeleccionado === 'Todos') {
-      toast.error('Debe seleccionar un periodo', { position: 'bottom-right' })
+      toast.error('Debe seleccionar un proceso', { position: 'bottom-right' })
       return
     }
     const data = {
@@ -91,7 +95,7 @@ const Resolucion = () => {
     try {
       const response = await axiosInstance.patch('Ofertas/' + seleccionado + '/', data)
       if (response.status === 200) {
-        toast.success('Periodo asignado exitosamente', { position: 'bottom-right' })
+        toast.success('Proceso asignado exitosamente', { position: 'bottom-right' })
         const rows = rowsRef.current
         const newRows = rows.map((row) => {
           if (row.id === seleccionado) {
@@ -104,17 +108,17 @@ const Resolucion = () => {
         })
         setRows(newRows)
       } else {
-        console.error('Error al asignar el periodo:', response)
-        toast.error('Error al asignar el periodo', { position: 'bottom-right' })
+        console.error('Error al asignar el proceso:', response)
+        toast.error('Error al asignar el proceso', { position: 'bottom-right' })
       }
     } catch (error) {
-      console.error('Error al asignar el periodo:', error)
+      console.error('Error al asignar el proceso:', error)
       if (error.response.status === 400) {
         if (error.response.data) {
           toast.error(error.response.data.detail, { position: 'bottom-right' })
         }
       } else {
-        toast.error('Error al asignar el periodo', { position: 'bottom-right' })
+        toast.error('Error al asignar el proceso', { position: 'bottom-right' })
       }
     }
   }
@@ -147,16 +151,16 @@ const Resolucion = () => {
     try {
       const response = await axiosInstance.post('Resoluciones/', data)
       if (response.status === 201) {
-        toast.success('Periodo creado exitosamente', { position: 'bottom-right' })
+        toast.success('Proceso creado exitosamente', { position: 'bottom-right' })
         setShowModal(false)
         setNewProceso({ id: '', precio: 7000, f_inicio: getCurrentDate(), f_termino: getCurrentDate(), n_meses: 4 })
         ObtenerProcesos()
       } else {
-        console.error('Error al crear el periodo:', response)
-        toast.error('Error al crear el periodo', { position: 'bottom-right' })
+        console.error('Error al crear el proceso:', response)
+        toast.error('Error al crear el proceso', { position: 'bottom-right' })
       }
     } catch (error) {
-      console.error('Error al crear el periodo:', error)
+      console.error('Error al crear el proceso:', error)
       if (error.response.status === 400) {
         if (error.response.data) {
           if (error.response.data.id) toast.error('Nombre es requerido', { position: 'bottom-right' })
@@ -165,7 +169,7 @@ const Resolucion = () => {
           }
         }
       } else {
-        toast.error('Error al crear el periodo', { position: 'bottom-right' })
+        toast.error('Error al crear el proceso', { position: 'bottom-right' })
       }
     }
   }
@@ -178,8 +182,20 @@ const Resolucion = () => {
     setFiltroResolucion(resolucion)
   }
 
+  const handleFechaSeleccionada = (start, end) => {
+    setFechaInicio(start)
+    setFechaFin(end)
+  }
+
   const filtros = {
-    resolucion: (row) => filtroResolucion === 'Todos' || row.Proceso === filtroResolucion
+    resolucion: (row) => filtroResolucion === 'Todos' || row.Proceso === filtroResolucion,
+    fechaSeleccionada: (row) => {
+      if (!fechaInicio && !fechaFin) return true
+      const itemFechaPostulacion = new Date(row.FechaPostulacion)
+      if (fechaInicio && !fechaFin) return itemFechaPostulacion >= fechaInicio
+      if (!fechaInicio && fechaFin) return itemFechaPostulacion <= fechaFin
+      return itemFechaPostulacion >= fechaInicio && itemFechaPostulacion <= fechaFin
+    }
   }
 
   const aplicarFiltros = (rows, filtros) => {
@@ -202,22 +218,30 @@ const Resolucion = () => {
         <div className='row mt-3 align-items-center'>
           {/* aqui van los filtros */}
           <div className='row mt-3'>
+            <div className='col-md-3'>
+              <label htmlFor='resolucion'>Seleccion de Proceso:</label>
+              <select
+                className='form-select'
+                value={procesoSeleccionado}
+                onChange={(e) => setProcesoSeleccionado(e.target.value)}
+              >
+                {procesos.map((proceso, index) => (
+                  <option key={index} value={proceso.id}>{proceso.id}</option>
+                ))}
+              </select>
+            </div>
+            <div className='col-md-3'>
+              <button className='btn color-btn' onClick={() => setShowModal(true)}>Nuevo Proceso</button>
+            </div>
             <FiltroResolucion
               resoluciones={resolucion}
               resolucionSeleccionada={filtroResolucion}
               handleResolucionSeleccionada={handleFiltroResolucion}
             />
-            <select
-              className='form-select'
-              value={procesoSeleccionado}
-              onChange={(e) => setProcesoSeleccionado(e.target.value)}
-            >
-              {procesos.map((proceso, index) => (
-                <option key={index} value={proceso.id}>{proceso.id}</option>
-              ))}
-            </select>
+            <FiltroFecha
+              handleFechaSeleccionada={handleFechaSeleccionada}
+            />
           </div>
-          <button className='btn color-btn' onClick={() => setShowModal(true)}>Nuevo Periodo</button>
         </div>
         <div className='row mt-3'>
           <Tabla titulos={titulos} rows={filteredData} mostrarBoton={false} />
@@ -230,16 +254,16 @@ const Resolucion = () => {
       {/* Modal para crear periodo */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Crear Periodo</Modal.Title>
+          <Modal.Title>Crear Proceso</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleCreate}>
             <Form.Group controlId='formNombreCompleto'>
               <Form.Label>Nombre </Form.Label>
-              <i style={{ fontSize: '14px' }}> Debe ser único, para identificar el periodo</i>
+              <i style={{ fontSize: '14px' }}> Debe ser único, para identificar el proceso</i>
               <Form.Control
                 type='text'
-                placeholder='Ingrese nombre del periodo'
+                placeholder='Ingrese nombre del proceso'
                 name='id'
                 value={newProceso.id}
                 onChange={handleChange}
@@ -247,7 +271,7 @@ const Resolucion = () => {
                 required
                 isInvalid={procesos.some((proceso) => proceso.id === newProceso.id)}
               />
-              <Form.Control.Feedback type='invalid'>Ya existe un periodo con ese nombre</Form.Control.Feedback>
+              <Form.Control.Feedback type='invalid'>Ya existe un proceso con ese nombre</Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId='formPrecio'>
               <Form.Label>Valor hora </Form.Label>

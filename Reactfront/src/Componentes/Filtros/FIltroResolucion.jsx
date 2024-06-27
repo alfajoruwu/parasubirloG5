@@ -3,7 +3,7 @@ import React from 'react'
 const FiltroResolucion = ({ resoluciones, resolucionSeleccionada, handleResolucionSeleccionada }) => {
   return (
     <div className='col-md-3'>
-      <label htmlFor='resolucion'>Proceso:</label>
+      <label htmlFor='resolucion'>Filtro por Proceso:</label>
       <select
         className='form-control'
         id='resolucion'

@@ -73,7 +73,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     n_cuenta = models.CharField(max_length=20, blank=True)
     banco = models.CharField(max_length=50, blank=True)
     n_contacto = models.CharField(max_length=12, blank=True)
-    horas_aceptadas = models.IntegerField(default=0)
     riesgo_academico = models.BooleanField(default=False)
     charla = models.BooleanField(default=False)
     Promedio = models.CharField(max_length=50, blank=True)

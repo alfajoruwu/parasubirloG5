@@ -1,6 +1,8 @@
 from rest_framework import serializers
+from django.db.models import Sum
 
 from usuarios.models import User
+from api.models import Oferta, Modulo
 
 
 class DatosEstudianteSerializer(serializers.ModelSerializer):
@@ -17,7 +19,7 @@ class DatosEstudianteSerializer(serializers.ModelSerializer):
             "n_contacto",
             "riesgo_academico",
             "charla",
-            "Promedio"
+            "Promedio",
         ]
 
 
@@ -27,6 +29,18 @@ class HorasEstudianteSerializer(serializers.ModelSerializer):
         fields = [
             "horas_aceptadas",
         ]
+
+    def to_representation(self, instance):
+        anio_maximo = Modulo.objects.latest("anio").anio
+        semestre_maximo = Modulo.objects.latest("semestre").semestre
+        ret = super().to_representation(instance)
+        horas = Oferta.objects.filter(
+            ayudante=instance,
+            modulo__anio=anio_maximo,
+            modulo__semestre=semestre_maximo,
+        ).aggregate(Sum("horas_ayudantia"))["horas_ayudantia__sum"]
+        ret["horas_aceptadas"] = horas
+        return ret
 
 
 class DatosProfesorSerializer(serializers.ModelSerializer):

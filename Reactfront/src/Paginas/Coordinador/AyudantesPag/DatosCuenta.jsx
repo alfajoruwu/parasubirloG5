@@ -26,7 +26,9 @@ const DatosCuenta = () => {
       .then((res) => {
         const resoluciones = res.data.map((row) => row.resolucion || 'No asignado')
         setResolucion(['Todos', ...new Set(resoluciones)])
+        
         const rows = res.data.map((row) => {
+          console.log(row)
           return {
             resolucion: row.resolucion ? row.resolucion : 'No asignado',
             Nombre: row.nombre_postulante,
@@ -48,7 +50,7 @@ const DatosCuenta = () => {
       })
   }, [])
 
-  const titulos = ['Resolución', 'Nombre', 'RUN', 'Banco', 'Tipo De cuenta', 'N° cuenta', 'Horas mensuales', 'CantidadMes', 'PagoMensual']
+  const titulos = ['Proceso', 'Nombre', 'RUN', 'Banco', 'Tipo De cuenta', 'N° cuenta', 'Horas mensuales', 'N° meses', 'PagoMensual']
 
   const exportData = () => {
     exportToExcel(rows2, 'DatosCuenta.xlsx', 'DatosCuenta')

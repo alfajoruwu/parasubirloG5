@@ -1,7 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from django.db.models import Sum
 
-from api.models import Postulacion, Oferta
+from api.models import Postulacion, Oferta, Modulo
 from api.serializadores.postulaciones_serializer import (
     PostulacionesProfesorSerializer,
     PostulacionesEstudianteSerializer,
@@ -56,21 +57,26 @@ class PostulacionesView(viewsets.GenericViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         if request.user.groups.filter(name="Profesor").exists():
+            anio_maximo = Modulo.objects.latest("anio").anio
+            semestre_maximo = Modulo.objects.latest("semestre").semestre
             instance = self.get_object()
             nuevo_estado = not instance.estado
             if nuevo_estado is False:
                 instance.estado = nuevo_estado
-                instance.postulante.horas_aceptadas -= instance.oferta.horas_ayudantia
                 instance.oferta.ayudante = None
                 instance.postulante.save()
                 instance.oferta.save()
                 instance.save()
                 return Response({"estado": instance.estado}, status=status.HTTP_200_OK)
 
-            if (
-                instance.postulante.horas_aceptadas + instance.oferta.horas_ayudantia
-                > 24
-            ):
+            horas = Oferta.objects.filter(
+                ayudante=instance.postulante,
+                modulo__anio=anio_maximo,
+                modulo__semestre=semestre_maximo,
+            ).aggregate(Sum("horas_ayudantia"))["horas_ayudantia__sum"]
+            if horas is None:
+                horas = 0
+            if horas + instance.oferta.horas_ayudantia > 24:
                 return Response(
                     {"detail": "Excede el máximo de horas aceptadas (24)."},
                     status=status.HTTP_409_CONFLICT,
@@ -86,7 +92,6 @@ class PostulacionesView(viewsets.GenericViewSet):
 
             instance.estado = nuevo_estado
             instance.save()
-            instance.postulante.horas_aceptadas += instance.oferta.horas_ayudantia
             instance.postulante.save()
             instance.oferta.ayudante = instance.postulante
             instance.oferta.save()
@@ -100,8 +105,11 @@ class PostulacionesView(viewsets.GenericViewSet):
     def create(self, request, *args, **kwargs):
         if request.user.groups.filter(name="Estudiante").exists():
             serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save(postulante=request.user)
+            try:
+                serializer.is_valid(raise_exception=True)
+                serializer.save(postulante=request.user)
+            except Exception as e:
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(
             {"detail": "No tienes permisos para realizar esta acción."},

@@ -8,7 +8,7 @@ import { FiltroSemestre, FiltroYear } from '../../Componentes/Filtros/FiltroSeme
 import FiltroEstadoAlumno from '../../Componentes/Filtros/FiltroEstadoAlumno'
 
 const Resultados = () => {
-  const Tablatitulos = ['Asignatura', 'Docente', 'Estado', 'Horas', '']
+  const Tablatitulos = ['Módulo', 'Profesor', 'Estado', 'Horas', '']
 
   const [datosResultadospostula2, setdatosResultadospostula2] = useState([])
   const [horas, sethoras] = useState(0)

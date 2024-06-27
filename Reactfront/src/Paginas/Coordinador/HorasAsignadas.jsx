@@ -30,8 +30,15 @@ const HorasAsignadas = () => {
   const [semestreSeleccionado, setSemestreSeleccionado] = useState('Todos')
   const [years, setYears] = useState([])
   const [semestres, setSemestres] = useState([])
+  const [modalEliminarVisible, setModalEliminarVisible] = useState(false)
+  const [isValidModulo, setIsValidModulo] = useState(false)
 
   const Tablatitulos = ['Nombre del profesor', 'Nombre del módulo', 'N° de horas', 'Observaciones', '']
+
+
+
+  
+
 
   const ObtenerDatos = async () => {
     try {
@@ -118,7 +125,9 @@ const HorasAsignadas = () => {
   }
 
   const handleModuloSeleccionado = (modulo) => {
+    console.log('Módulo seleccionado:', modulo)
     setModuloSeleccionado(modulo)
+    setIsValidModulo(modulo !== 'Todos' && modulo !== '')
   }
 
   const handleProfesorSeleccionado = (profesor) => {
@@ -210,6 +219,45 @@ const HorasAsignadas = () => {
     setShowModal(false)
     setModalContent('')
     setModalContent2('')
+    setModuloSeleccionado('Todos')
+  }
+
+  const handleEliminarModulo = () => {
+    // Asegúrate de que moduloSeleccionado tenga el valor correcto
+    console.log('Eliminar módulo:', moduloSeleccionado)
+
+    // Busca el módulo en los datos filtrados
+    const modulo = data.find(item => item.Asignatura === moduloSeleccionado)
+
+    // Si no se encontró el módulo, muestra un mensaje de error
+    if (!modulo) {
+      console.error('No se encontró el módulo:', moduloSeleccionado)
+      toast.error('No se encontró el módulo', { position: 'bottom-right' })
+      return
+    }
+
+    // Si se encontró el módulo, elimínalo
+    axiosInstance.delete(`Modulos/${modulo.id}/`).then(response => {
+      if (response.status === 204) {
+        toast.success('Módulo eliminado correctamente', { position: 'bottom-right' })
+        ObtenerDatos()
+        handleCloseModal()
+        setModuloSeleccionado('Todos')
+        setIsValidModulo(false)
+      }
+    }).catch(error => {
+      console.error('Error al eliminar el módulo:', error)
+      toast.error('Error al eliminar el módulo', { position: 'bottom-right' })
+    })
+
+    setShowModal(false)
+  }
+
+  const toggleModalEliminar = () => {
+    // Antes de mostrar el modal de eliminación, actualiza los módulos según los filtros actuales
+    const filteredModulos = filteredData.map(item => item.Asignatura)
+    setModulos(['Todos', ...new Set(filteredModulos)])
+    setModalEliminarVisible(!modalEliminarVisible)
   }
 
   return (
@@ -242,7 +290,10 @@ const HorasAsignadas = () => {
             handleSemestreSeleccionado={handleSemestreSeleccionado}
           />
           <div className='col-md-2'>
-            <button className='btn color-btn' onClick={() => setShowPopup(true)}>Subir CSV</button>
+            <button style={{height:'3rem', marginTop:'1rem'}} className='btn color-btn' onClick={() => setShowPopup(true)}>Subir Excel</button>
+          </div>
+          <div className='col-md-2'>
+            <Button style={{height:'3rem', marginTop:'1rem'}} variant='danger' onClick={toggleModalEliminar}> Eliminar módulo </Button>
           </div>
         </div>
         <div className='row'>
@@ -256,6 +307,33 @@ const HorasAsignadas = () => {
       </div>
       <CsvUploadPopup show={showPopup} onClose={() => setShowPopup(false)} updateModules={ObtenerDatos} />
       <ToastContainer />
+      {/* Modal para eliminar módulo */}
+      <Modal show={modalEliminarVisible} onHide={toggleModalEliminar}>
+        <Modal.Header closeButton>
+          <Modal.Title>Eliminar Módulo</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Selecciona el módulo que deseas eliminar:</p>
+          <Dropdown>
+            <Dropdown.Toggle variant='secondary' id='dropdown-basic'>
+              {moduloSeleccionado === 'Todos' ? 'Selecciona un módulo' : moduloSeleccionado}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {modulos.map(modulo => (
+                <Dropdown.Item key={modulo} onClick={() => handleModuloSeleccionado(modulo)}>{modulo}</Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='secondary' onClick={toggleModalEliminar}>
+            Cancelar
+          </Button>
+          <Button variant='danger' onClick={handleEliminarModulo} disabled={!isValidModulo}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
