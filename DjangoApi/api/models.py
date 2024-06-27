@@ -116,7 +116,7 @@ class Postulacion(models.Model):
         ).exists():
             raise ValidationError("No puedes postular a una oferta 2 veces")
         # Validar que la oferta este aceptada por el coordinador
-        if self.oferta.estado:  # no deberia pasar
+        if not self.oferta.estado:  # no deberia pasar
             raise ValidationError("No puedes postular en este momento")
 
     def save(self, *args, **kwargs):

@@ -27,7 +27,8 @@ class HorasEstudianteSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "horas_aceptadas",
+            "id",
+            "run",
         ]
 
     def to_representation(self, instance):
@@ -39,6 +40,8 @@ class HorasEstudianteSerializer(serializers.ModelSerializer):
             modulo__anio=anio_maximo,
             modulo__semestre=semestre_maximo,
         ).aggregate(Sum("horas_ayudantia"))["horas_ayudantia__sum"]
+        if horas is None:
+            horas = 0
         ret["horas_aceptadas"] = horas
         return ret
 

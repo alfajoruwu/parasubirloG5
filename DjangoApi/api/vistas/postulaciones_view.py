@@ -104,6 +104,10 @@ class PostulacionesView(viewsets.GenericViewSet):
 
     def create(self, request, *args, **kwargs):
         if request.user.groups.filter(name="Estudiante").exists():
+            promedio_estudiante = (
+                request.user.Promedio
+            )  # promedio del estudiante con p mayúscula porque el mati trollea
+            request.data["promedio"] = promedio_estudiante
             serializer = self.get_serializer(data=request.data)
             try:
                 serializer.is_valid(raise_exception=True)
