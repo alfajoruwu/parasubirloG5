@@ -36,7 +36,7 @@ FRONTEND_URL = "http://34.176.241.128"  # URL del frontend para enviar correos
 SECRET_KEY = "dsñfksldkfñlskd"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
