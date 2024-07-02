@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { TableCell, TableRow, tableRowClasses } from '@mui/material';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import '../../Paginas/App/App.css';
-import TextField from '@mui/material/TextField';
-import './Tabla.css';
-import './TablaSimplev2.css';
-import axiosInstance from '../../utils/axiosInstance';
-import TextareaAutosize from '@mui/material/TextareaAutosize';
+import React, { useEffect, useState } from 'react'
+import { TableCell, TableRow, tableRowClasses } from '@mui/material'
+import Modal from 'react-bootstrap/Modal'
+import Button from 'react-bootstrap/Button'
+import '../../Paginas/App/App.css'
+import TextField from '@mui/material/TextField'
+import './Tabla.css'
+import './TablaSimplev2.css'
+import axiosInstance from '../../utils/axiosInstance'
+import TextareaAutosize from '@mui/material/TextareaAutosize'
 
-export default function Row({ modulo }) {
-  const [Nayudantes, setNayudantes] = useState(modulo.ofertas.length);
+export default function Row ({ modulo }) {
+  const [Nayudantes, setNayudantes] = useState(modulo.ofertas.length)
   const [ofertas, setOfertas] = useState(
     Array.from({ length: Nayudantes }, (_, index) => ({
       disponibilidad: '',
@@ -20,37 +20,41 @@ export default function Row({ modulo }) {
       id: null,
       isLoading: false
     }))
-  );
+  )
 
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState('');
-  const [modalContent2, setModalContent2] = useState('');
+  const [showModal, setShowModal] = useState(false)
+  const [modalContent, setModalContent] = useState('')
+  const [modalContent2, setModalContent2] = useState('')
+
+  const [showSolicitudModal, setShowSolicitudModal] = useState(false)
+  const [solicitudComentario, setSolicitudComentario] = useState('')
+  const [solicitudModuloId, setSolicitudModuloId] = useState(null)
+  const [solicitudModuloNombre, setSolicitudModuloNombre] = useState('')
 
   const handleShowModal = (mensaje) => {
-    setModalContent(mensaje);
-    setShowModal(true);
-  };
-  
-  const handleCloseModal = () => {
-    setModalContent('');
-    setShowModal(false);
-  };
+    setModalContent(mensaje)
+    setShowModal(true)
+  }
 
+  const handleCloseModal = () => {
+    setModalContent('')
+    setShowModal(false)
+  }
 
   const guardarOfertas = (newOfertas) => {
-    setOfertas(newOfertas);
-    modulo.ofertas = newOfertas;
-  };
+    setOfertas(newOfertas)
+    modulo.ofertas = newOfertas
+  }
 
   const mandarAlBack = (oferta) => {
     if (oferta.isLoading) {
-      return;
+      return
     }
     if (oferta.id === null) {
       if (oferta.horas_ayudantia === null || oferta.disponibilidad === '' || oferta.nota_mini === null || oferta.tareas === '') {
-        return;
+        return
       }
-      oferta.isLoading = true;
+      oferta.isLoading = true
       axiosInstance.post('Ofertas/', {
         modulo: modulo.id,
         horas_ayudantia: oferta.horas_ayudantia,
@@ -59,12 +63,12 @@ export default function Row({ modulo }) {
         tareas: oferta.tareas,
         otros: oferta.otros
       }).then(response => {
-        oferta.id = response.data.id;
-        oferta.isLoading = false;
+        oferta.id = response.data.id
+        oferta.isLoading = false
       }).catch(error => {
-        console.log(error);
-        oferta.isLoading = false;
-      });
+        console.log(error)
+        oferta.isLoading = false
+      })
     } else {
       axiosInstance.put('Ofertas/' + oferta.id + '/', {
         modulo: modulo.id,
@@ -73,9 +77,9 @@ export default function Row({ modulo }) {
         nota_mini: oferta.nota_mini,
         tareas: oferta.tareas,
         otros: oferta.otros
-      });
+      })
     }
-  };
+  }
 
   const crearOferta = () => {
     setOfertas([
@@ -87,96 +91,111 @@ export default function Row({ modulo }) {
         otros: '',
         id: null
       }))
-    ]);
-  };
+    ])
+  }
 
   const borrarOfertas = () => {
     modulo.ofertas.slice(Nayudantes).forEach(oferta => {
       if (oferta.id !== null) {
-        axiosInstance.delete('Ofertas/' + oferta.id);
-        oferta.id = null;
+        axiosInstance.delete('Ofertas/' + oferta.id)
+        oferta.id = null
       }
-    });
-    setOfertas(modulo.ofertas.slice(0, Nayudantes));
-  };
+    })
+    setOfertas(modulo.ofertas.slice(0, Nayudantes))
+  }
 
   useEffect(() => {
     if (Nayudantes > modulo.ofertas.length) {
-      crearOferta();
+      crearOferta()
     } else {
-      borrarOfertas();
+      borrarOfertas()
     }
-    setDesplegarOferta(Array.from({ length: Nayudantes }, (_, index) => desplegarOferta[index] || false));
-  }, [Nayudantes, modulo.ofertas]);
+    setDesplegarOferta(Array.from({ length: Nayudantes }, (_, index) => desplegarOferta[index] || false))
+  }, [Nayudantes, modulo.ofertas])
 
-  const [desplegarOferta, setDesplegarOferta] = useState(Array.from({ length: modulo.ofertas.length }, () => false));
-  const [desplegarModulo, setDesplegarModulo] = useState(false);
+  const [desplegarOferta, setDesplegarOferta] = useState(Array.from({ length: modulo.ofertas.length }, () => false))
+  const [desplegarModulo, setDesplegarModulo] = useState(false)
 
   const toggleModulo = () => {
-    setDesplegarModulo(!desplegarModulo);
-  };
+    setDesplegarModulo(!desplegarModulo)
+  }
   const toggleOferta = (index) => {
-    setDesplegarOferta(desplegarOferta.map((open, cellIndex) => (index === cellIndex ? !open : open)));
-  };
+    setDesplegarOferta(desplegarOferta.map((open, cellIndex) => (index === cellIndex ? !open : open)))
+  }
   const cambiarDisponibilidad = (e, index) => {
-    const newAyudantes = [...ofertas];
-    newAyudantes[index].disponibilidad = e.target.value;
-    guardarOfertas(newAyudantes);
-    mandarAlBack(newAyudantes[index]);
-  };
+    const newAyudantes = [...ofertas]
+    newAyudantes[index].disponibilidad = e.target.value
+    guardarOfertas(newAyudantes)
+    mandarAlBack(newAyudantes[index])
+  }
   const cambiarNota = (e, index) => {
-    const newAyudantes = [...ofertas];
-    newAyudantes[index].nota_mini = e.target.value;
-    guardarOfertas(newAyudantes);
-    mandarAlBack(newAyudantes[index]);
-  };
+    const newAyudantes = [...ofertas]
+    newAyudantes[index].nota_mini = e.target.value
+    guardarOfertas(newAyudantes)
+    mandarAlBack(newAyudantes[index])
+  }
   const cambiarTareas = (e, index) => {
-    const newAyudantes = [...ofertas];
-    newAyudantes[index].tareas = e.target.value;
-    guardarOfertas(newAyudantes);
-    mandarAlBack(newAyudantes[index]);
-  };
+    const newAyudantes = [...ofertas]
+    newAyudantes[index].tareas = e.target.value
+    guardarOfertas(newAyudantes)
+    mandarAlBack(newAyudantes[index])
+  }
   const cambiarOtros = (e, index) => {
-    const newAyudantes = [...ofertas];
-    newAyudantes[index].otros = e.target.value;
-    guardarOfertas(newAyudantes);
-    mandarAlBack(newAyudantes[index]);
-  };
+    const newAyudantes = [...ofertas]
+    newAyudantes[index].otros = e.target.value
+    guardarOfertas(newAyudantes)
+    mandarAlBack(newAyudantes[index])
+  }
 
   const cambiarHoras = (horas, index) => {
-    const newAyudantes = [...ofertas];
-    newAyudantes[index].horas_ayudantia = parseInt(horas);
-    guardarOfertas(newAyudantes);
-    mandarAlBack(newAyudantes[index]);
-  };
+    const newAyudantes = [...ofertas]
+    newAyudantes[index].horas_ayudantia = parseInt(horas)
+    guardarOfertas(newAyudantes)
+    mandarAlBack(newAyudantes[index])
+  }
 
-  const SolicitarHoras = (id, modulo) => {
-    const comentario = prompt(`Ingresar la cantidad de horas que desea solicitar para el modulo ${modulo} y porque quiere solicitar mas horas`);
-    if (comentario) {
-      axiosInstance.patch(`Modulos/${id}/`, {
-        solicitud_horas: comentario,
+  const enviarSolicitud = () => {
+    if (solicitudComentario) {
+      axiosInstance.patch(`Modulos/${solicitudModuloId}/`, {
+        solicitud_horas: solicitudComentario
       }).then(response => {
-        console.log(comentario);
-        alert("Solicitud enviada");
-        console.log(response);
+        alert('Solicitud enviada')
+        handleCloseSolicitudModal()
       }).catch(error => {
-        console.error('Error al enviar la solicitud:', error);
-      });
+        console.error('Error al enviar la solicitud:', error)
+        alert('Error al enviar la solicitud')
+      })
     } else {
-      alert("No se envió la solicitud");
+      alert('No se envió la solicitud')
     }
-  };
+  }
 
+  const handleShowSolicitudModal = (id, nombre) => {
+    setSolicitudModuloId(id)
+    setSolicitudModuloNombre(nombre)
+    setShowSolicitudModal(true)
+  }
+
+  const handleCloseSolicitudModal = () => {
+    setSolicitudComentario('')
+    setSolicitudModuloId(null)
+    setSolicitudModuloNombre('')
+    setShowSolicitudModal(false)
+  }
+
+  const SolicitarHoras = (id, nombre) => {
+    handleShowSolicitudModal(id, nombre)
+  }
   return (
     <>
       {console.log(modulo)}
       <TableRow className='module-header table-row-margin' onClick={toggleModulo}>
 
-        <TableCell>  
-          <div className='primero container justify-content-center align-items-center d-flex'> {modulo.Asignatura} </div> 
+        <TableCell>
+          <div className='primero container justify-content-center align-items-center d-flex'> {modulo.Asignatura} </div>
         </TableCell>
         <TableCell className='selector '>
-          <label htmlFor={`Nayudantes_${modulo.id}`}></label>
+          <label htmlFor={`Nayudantes_${modulo.id}`} />
           <TextField
             id={`Nayudantes_${modulo.id}`}
             name={`Nayudantes_${modulo.id}`}
@@ -189,13 +208,21 @@ export default function Row({ modulo }) {
             inputProps={{ min: 0 }}
           />
         </TableCell>
-        <TableCell> 
+        <TableCell>
           <div className='demas container justify-content-center align-items-center d-flex'>
             {modulo.HorasTotales}
           </div>
         </TableCell>
         <TableCell className=' '>
-          <button onClick={() => SolicitarHoras(modulo.id,modulo.Asignatura)} className='final btn color-btn'> Mas horas </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation() // Detiene la propagación del evento
+              SolicitarHoras(modulo.id, modulo.Asignatura)
+            }}
+            className='final btn color-btn'
+          >
+            Más horas
+          </button>
         </TableCell>
 
       </TableRow>
@@ -205,26 +232,23 @@ export default function Row({ modulo }) {
           {ofertas.map((oferta, index) => (
             <React.Fragment key={index}>
               <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} className='offer-header' onClick={() => toggleOferta(index)}>
-              
-                <TableCell >
-                <div style={{ backgroundColor: '#018d8d' }} className=' primero container justify-content-center align-items-center d-flex'>
 
-                  Oferta para el ayudante {index + 1}
-                </div>
-                  
+                <TableCell>
+                  <div style={{ backgroundColor: '#018d8d' }} className=' primero container justify-content-center align-items-center d-flex'>
+
+                    Oferta para el ayudante {index + 1}
+                  </div>
+
                 </TableCell>
-       
-       
-        
-                <TableCell> 
-                <div className='container d-flex'>
-                 <label htmlFor={`Estado_${index}`}>Estado:</label>
-                 <div className='demas container d-flex justify-content-center align-items-center'>{oferta.estado? "Publicada":"Pendiente" } </div> 
 
-                </div>
-                </TableCell>    
+                <TableCell>
+                  <div className='container d-flex'>
+                    <label htmlFor={`Estado_${index}`}>Estado:</label>
+                    <div className='demas container d-flex justify-content-center align-items-center'>{oferta.estado ? 'Publicada' : 'Pendiente'} </div>
 
-                  
+                  </div>
+                </TableCell>
+
                 <TableCell className='selector container'>
                   <label htmlFor={`horas_ayudantia_${index}`}>Horas Ayudantía:</label>
                   <TextField
@@ -240,23 +264,29 @@ export default function Row({ modulo }) {
                   />
                 </TableCell>
 
-
-                <TableCell> 
-                  <button onClick={() => handleShowModal(oferta.observaciones?oferta.observaciones:"no hay observaciones" )} className='final btn color-btn'> Observaciones </button>
-               </TableCell>
-
+                <TableCell>
+                  <button
+                    onClick={(e) => {
+                        e.stopPropagation() // Detiene la propagación del evento
+                        handleShowModal(oferta.observaciones ? oferta.observaciones : 'no hay observaciones')
+                      }}
+                    className={oferta.observaciones ? 'btn btn-amarillo' : 'final btn color-btn'}
+                  >
+                      Observaciones
+                  </button>
+                </TableCell>
 
               </TableRow>
               {desplegarOferta[index] && (
                 <>
                   <TableRow>
-            
+
                     <TableCell className=''>
-                      <div className='container'>
+
                         <div className='col interior interno' style={{ height: '6rem' }}>
                           <div className='titulo container justify-content-center align-items-center d-flex'>Disponibilidad </div>
                           <div className='titulo container justify-content-center align-items-center'>
-                            <label htmlFor={`disponibilidad_${index}`} className='sr-only'></label>
+                            <label htmlFor={`disponibilidad_${index}`} className='sr-only' />
                             <textarea
                               id={`disponibilidad_${index}`}
                               name={`disponibilidad_${index}`}
@@ -266,64 +296,64 @@ export default function Row({ modulo }) {
                             />
                           </div>
                         </div>
-                      </div>
-                    </TableCell>
+
+                      </TableCell>
                     <TableCell>
-                      <div className='container ' style={{width:'10rem'}}>
-                        <div className='col interior ' style={{ height: '6rem' }}>
-                          <div className='titulo container justify-content-center align-items-center d-flex'>Nota mínima</div>
-                          <div className='titulo container justify-content-center align-items-center d-flex'>
-                            <label htmlFor={`nota_mini_${index}`} className='sr-only'></label>
-                            <TextField
-                              id={`nota_mini_${index}`}
-                              name={`nota_mini_${index}`}
-                              style={{ backgroundColor: 'white' }}
-                              type='number'
-                              value={oferta.nota_mini}
-                              onChange={(e) => cambiarNota(e, index)}
-                              onClick={(e) => { e.stopPropagation() }}
-                              variant='outlined'
-                              size='small'
-                              inputProps={{ min: 0 }}
-                            />
+                        <div className='container ' style={{ width: '10rem' }}>
+                          <div className='col interior ' style={{ height: '6rem' }}>
+                            <div className='titulo container justify-content-center align-items-center d-flex'>Nota mínima</div>
+                            <div className='titulo container justify-content-center align-items-center d-flex'>
+                              <label htmlFor={`nota_mini_${index}`} className='sr-only' />
+                              <TextField
+                                id={`nota_mini_${index}`}
+                                name={`nota_mini_${index}`}
+                                style={{ backgroundColor: 'white' }}
+                                type='number'
+                                value={oferta.nota_mini}
+                                onChange={(e) => cambiarNota(e, index)}
+                                onClick={(e) => { e.stopPropagation() }}
+                                variant='outlined'
+                                size='small'
+                                inputProps={{ min: 0 }}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </TableCell>
+                      </TableCell>
                     <TableCell>
-                      <div className='container '>
-                        <div className='col interior' style={{ height: '6rem' }}>
-                          <div className='titulo container justify-content-center align-items-center d-flex'>Tareas</div>
-                          <div className='titulo container justify-content-center align-items-center d-flex'>
-                            <label htmlFor={`tareas_${index}`} className='sr-only'></label>
-                            <textarea
-                              id={`tareas_${index}`}
-                              name={`tareas_${index}`}
-                              className='textoarea'
-                              value={oferta.tareas}
-                              onChange={(e) => cambiarTareas(e, index)}
-                            />
+                        <div className='container '>
+                          <div className='col interior' style={{ height: '6rem' }}>
+                            <div className='titulo container justify-content-center align-items-center d-flex'>Tareas</div>
+                            <div className='titulo container justify-content-center align-items-center d-flex'>
+                              <label htmlFor={`tareas_${index}`} className='sr-only' />
+                              <textarea
+                                id={`tareas_${index}`}
+                                name={`tareas_${index}`}
+                                className='textoarea'
+                                value={oferta.tareas}
+                                onChange={(e) => cambiarTareas(e, index)}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </TableCell>
+                      </TableCell>
                     <TableCell>
-                      <div className='container '>
-                        <div className='col interior' style={{ height: '6rem' }}>
-                          <div className='titulo container justify-content-center align-items-center d-flex'>Otros</div>
-                          <div className='titulo container justify-content-center align-items-center d-flex'>
-                            <label htmlFor={`otros_${index}`} className='sr-only'></label>
-                            <textarea
-                              id={`otros_${index}`}
-                              name={`otros_${index}`}
-                              className='textoarea'
-                              value={oferta.otros}
-                              onChange={(e) => cambiarOtros(e, index)}
-                            />
+                        <div className='container '>
+                          <div className='col interior' style={{ height: '6rem' }}>
+                            <div className='titulo container justify-content-center align-items-center d-flex'>Otros</div>
+                            <div className='titulo container justify-content-center align-items-center d-flex'>
+                              <label htmlFor={`otros_${index}`} className='sr-only' />
+                              <textarea
+                                id={`otros_${index}`}
+                                name={`otros_${index}`}
+                                className='textoarea'
+                                value={oferta.otros}
+                                onChange={(e) => cambiarOtros(e, index)}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </TableCell>
+                      </TableCell>
                   </TableRow>
                 </>
               )}
@@ -343,9 +373,38 @@ export default function Row({ modulo }) {
           <Button variant='secondary' onClick={handleCloseModal}>
             Cerrar
           </Button>
- 
+
         </Modal.Footer>
       </Modal>
+
+      <Modal show={showSolicitudModal} onHide={handleCloseSolicitudModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Solicitar Más Horas</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <p>¿Deseas solicitar más horas para el módulo <strong>{solicitudModuloNombre}</strong>?</p>
+            <TextField
+              fullWidth
+              variant='outlined'
+              label='Comentario'
+              value={solicitudComentario}
+              onChange={(e) => setSolicitudComentario(e.target.value)}
+              multiline
+              rows={4}
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='secondary' onClick={handleCloseSolicitudModal}>
+            Cancelar
+          </Button>
+          <Button variant='primary' onClick={enviarSolicitud}>
+            Enviar Solicitud
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </>
-  );
+  )
 }

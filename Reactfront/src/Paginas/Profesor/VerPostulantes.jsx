@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 
 import '../App/App.css'
 import Navbar from '../../Componentes/navbar/NavbarProfesor'
-import TablaSimple from '../../Componentes/Tablaejemplo/TablaSimpleProfesor'
+import TablaSimple from '../../Componentes/Tablaejemplo/TablaSimpleProfesor2'
 import axiosInstance from '../../utils/axiosInstance'
 import { FiltroSemestre, FiltroYear } from '../../Componentes/Filtros/FiltroSemestre'
 

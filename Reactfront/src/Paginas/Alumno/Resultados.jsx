@@ -1,14 +1,14 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../App/App.css'
 import NavbarAlumno from '../../Componentes/navbar/NavbarAlumno'
-import TablaSimplev2 from '../../Componentes/Tablaejemplo/TablaSimplev2'
+import TablaSimplev2 from '../../Componentes/Tablaejemplo/TablaSimpleAlumno'
 import { useEffect, useState } from 'react'
 import axiosInstance from '../../utils/axiosInstance'
 import { FiltroSemestre, FiltroYear } from '../../Componentes/Filtros/FiltroSemestre'
 import FiltroEstadoAlumno from '../../Componentes/Filtros/FiltroEstadoAlumno'
 
 const Resultados = () => {
-  const Tablatitulos = ['Módulo', 'Profesor', 'Estado', 'Horas', '']
+  const Tablatitulos = ['Módulo', 'Profesor', 'Estado', 'Horas', 'Datos Profesor']
 
   const [datosResultadospostula2, setdatosResultadospostula2] = useState([])
   const [horas, sethoras] = useState(0)

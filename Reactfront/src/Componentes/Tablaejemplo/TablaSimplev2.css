@@ -12,6 +12,44 @@
   font-weight: bold; /* Opcional: para hacer el texto del encabezado en negrita */
 }
 
+.btn-rojo {
+  background-color: #cc1e1e ;
+  color: white ;
+  margin: 0.5rem;
+  width: 9.5rem; /* Ancho del botón */
+  height: 3rem;
+  font-size: 1rem;
+  align-items: center; /* Centrar verticalmente */
+  justify-content: center; /* Centrar horizontalmente */
+  text-align: center; 
+  border-color:#cc1e1e  ;
+}
+
+.btn-rojo:hover {
+  background-color: #e40c0c ; /* Un color amarillo más oscuro para el hover */
+  color: white ;
+}
+
+.btn-amarillo {
+  background-color: #0a6dca ;
+  color: white ;
+  margin: 0.5rem;
+  width: 9.5rem; /* Ancho del botón */
+  height: 3rem;
+  font-size: 1rem;
+  align-items: center; /* Centrar verticalmente */
+  justify-content: center; /* Centrar horizontalmente */
+  text-align: center; 
+  border-color:#0a6dca ;
+}
+
+.btn-amarillo:hover {
+  background-color: #0c29eb ; /* Un color amarillo más oscuro para el hover */
+  color: white ;
+}
+
+
+
 .primero{
     background-color: #1ECCCC;
     margin-top: 1rem !important;

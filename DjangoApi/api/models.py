@@ -42,12 +42,15 @@ class Modulo(models.Model):
         # Validar que la sección no sea vacía
         if self.seccion == "":
             raise ValidationError("La sección no puede ser vacía")
-        if self.profesor_asignado is None:
-            Oferta.objects.filter(modulo=self).delete()
 
     def save(self, *args, **kwargs):
+        nuevo = self.pk is None
         self.clean()
         super().save(*args, **kwargs)
+        if not nuevo:
+            if self.profesor_asignado is None:
+                if Oferta.objects.filter(modulo=self).exists():
+                    Oferta.objects.filter(modulo=self).delete()
 
 
 # clase oferta
@@ -73,9 +76,48 @@ class Oferta(models.Model):
     )  # horas de ayudantia asignadas al estudiante
     observaciones = models.CharField(max_length=500, blank=True)
     fecha_creacion = models.DateField(auto_now_add=True)
+    fecha_modificacion = models.DateField(auto_now=True)
 
     def __str__(self):
         return f"oferta {self.id} al {self.modulo}"
+
+    def clean(self):
+        # Validar que la nota mínima sea mayor o igual a 1.0
+        if self.nota_mini < 1.0:
+            raise ValidationError("La nota mínima debe ser mayor o igual a 1.0")
+        # Validar que la nota mínima sea menor o igual a 7.0
+        if self.nota_mini > 7.0:
+            raise ValidationError("La nota mínima debe ser menor o igual a 7.0")
+
+        # Validar que las horas de ayudantía sean mayores a 0
+        if self.horas_ayudantia <= 0:
+            raise ValidationError("Las horas de ayudantía deben ser mayores a 0")
+        if self.horas_ayudantia > 24:
+            raise ValidationError("Las horas de ayudantía no pueden ser mayores a 24")
+        # Contar que las horas de ayudantía de todas las ofertas del módulo no superen las horas asignadas al módulo
+        horas_asignadas = (
+            Oferta.objects.filter(modulo=self.modulo)
+            .exclude(id=self.id)
+            .aggregate(models.Sum("horas_ayudantia"))["horas_ayudantia__sum"]
+        )
+        if horas_asignadas is None:
+            horas_asignadas = 0
+        if horas_asignadas + self.horas_ayudantia > self.modulo.horas_asignadas:
+            print(horas_asignadas, self.horas_ayudantia, self.modulo.horas_asignadas)
+            raise ValidationError(
+                "Las horas de ayudantía de todas las ofertas del módulo no pueden superar las horas asignadas al módulo"
+            )
+
+        # Validar que la disponibilidad no sea vacía
+        if self.disponibilidad == "":
+            raise ValidationError("La disponibilidad no puede ser vacía")
+        # Validar que las tareas no sean vacías
+        if self.tareas == "":
+            raise ValidationError("Las tareas no pueden ser vacías")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
 
 # clase postulaciones
@@ -110,11 +152,6 @@ class Postulacion(models.Model):
         # Validar que el promedio sea menor o igual a 7.0
         if self.promedio > 7.0:
             raise ValidationError("El promedio debe ser menor o igual a 7.0")
-        # Validar que no postule a una oferta 2 veces
-        if Postulacion.objects.filter(
-            postulante=self.postulante, oferta=self.oferta
-        ).exists():
-            raise ValidationError("No puedes postular a una oferta 2 veces")
         # Validar que la oferta este aceptada por el coordinador
         if not self.oferta.estado:  # no deberia pasar
             raise ValidationError("No puedes postular en este momento")
@@ -122,6 +159,13 @@ class Postulacion(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["postulante", "oferta"], name="unique_postulacion"
+            )
+        ]
 
 
 # clase Resolucion

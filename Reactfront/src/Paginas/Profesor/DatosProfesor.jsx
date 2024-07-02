@@ -9,6 +9,7 @@ const DatosProfesor = () => {
   const [nombre, setNombre] = useState('')
   const [correo, setCorreo] = useState('')
   const [contacto, setContacto] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     const ObtenerDatos = async () => {
@@ -25,6 +26,11 @@ const DatosProfesor = () => {
   }, [])
 
   const LlenarDatos = async () => {
+    if (!nombre || !correo || !contacto) {
+      setErrorMessage('Todos los campos deben ser rellenados.')
+      return
+    }
+
     try {
       await axiosInstance.patch('Datos/uwu/',
         {
@@ -33,8 +39,10 @@ const DatosProfesor = () => {
           otro_contacto: contacto
         }
       )
+      setErrorMessage('') 
     } catch (error) {
       console.error('Error al enviar la solicitud:', error)
+      setErrorMessage('Error al enviar la solicitud. Inténtelo de nuevo.')
     }
   }
 
@@ -44,65 +52,61 @@ const DatosProfesor = () => {
 
       <div className='container Componente'>
         <div className='container Componente '>
+          {errorMessage && (
+            <div className='alert alert-danger' role='alert'>
+              {errorMessage}
+            </div>
+          )}
 
           <div className='row margen'>
-
             <div className='col'>
-
               <div className='row'>
-
                 <div className='col-3'>
                   <h6 className='letra'>Nombre</h6>
                   <div className='linea' />
                 </div>
-
                 <div className='col'>
-                  <input name='nombre' className='' onChange={(e) => setNombre(e.target.value)} value={nombre} />
+                  <input
+                    name='nombre'
+                    className=''
+                    onChange={(e) => setNombre(e.target.value)}
+                    value={nombre}
+                  />
                 </div>
-
               </div>
-
             </div>
-
             <div className='col' />
           </div>
 
           <div className='row margen'>
-
             <div className='col' />
-
           </div>
 
           <div className='row margen'>
-
             <div className='col'>
-
               <div className='row'>
-
                 <div className='col-3'>
                   <h6 className='letra'>Otro contacto</h6>
                   <div className='linea' />
                 </div>
-
                 <div className='col'>
-                  <input name='otro_contacto' className='' onChange={(e) => setContacto(e.target.value)} value={contacto} />
+                  <input
+                    name='otro_contacto'
+                    className=''
+                    onChange={(e) => setContacto(e.target.value)}
+                    value={contacto}
+                  />
                 </div>
-
               </div>
-
             </div>
-
             <div className='col' />
-
           </div>
 
         </div>
 
         <div className='container d-flex justify-content-center align-items-center'>
-          <button onClick={LlenarDatos} className='btn color-btn'> Guardar</button>
-
+          <button onClick={LlenarDatos} className='btn color-btn'>Guardar</button>
         </div>
-
       </div>
     </div>
   )

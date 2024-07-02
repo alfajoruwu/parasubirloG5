@@ -9,7 +9,7 @@ import logo from './logo.png';
 import cerrarSesion from './cerrarSesion.png';
 
 const NavbarAlumno = () => {
-  const [nombre, setNombre] = useState('por defecto');
+  const [nombre, setNombre] = useState('Estudiante');
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const NavbarAlumno = () => {
             <img
               src={logo}
               alt="Logo"
-              height="60"
+              height="80"
               width="auto"
               className="d-inline-block align-top"
             />
@@ -71,13 +71,13 @@ const NavbarAlumno = () => {
               </NavLink>
             </Nav>
             <Nav>
-              <span className="nav-link colorTextoGris">{nombre}</span>
+              <div className="colorTextoGris">{nombre}</div>
               <button onClick={handleLogout} className="iconoperfil">
                 <img
                   src={cerrarSesion}
                   alt="Logout"
-                  height="60"
-                  width="60"
+                  height="35"
+                  width="35"
                   className="logout-icon"
                 />
               </button>

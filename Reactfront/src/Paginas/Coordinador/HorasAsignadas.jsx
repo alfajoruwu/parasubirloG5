@@ -35,11 +35,6 @@ const HorasAsignadas = () => {
 
   const Tablatitulos = ['Nombre del profesor', 'Nombre del módulo', 'N° de horas', 'Observaciones', '']
 
-
-
-  
-
-
   const ObtenerDatos = async () => {
     try {
       const responseModulos = await axiosInstance.get('Modulos/')
@@ -50,7 +45,7 @@ const HorasAsignadas = () => {
       const profesores = [{ id: null, nombre_completo: 'No asignado' }, ...responseProfesores.data]
       setListaProfesor(profesores)
       setProfesores(['Todos', ...profesores.map(prof => prof.nombre_completo)])
-
+      console.log(responseModulos)
       const newData = responseModulos.data.map(item => ({
         Dropdown: {
           lista_profesor: profesores,
@@ -59,9 +54,12 @@ const HorasAsignadas = () => {
         Asignatura: item.nombre,
         HorasTotales: item.horas_asignadas,
         id: item.id,
-        Boton: { titulo: 'Observaciones', funcion: () => handleShowModal(item.solicitud_horas, item.historial) },
+        Boton: { titulo: 'Observaciones', funcion: () => handleShowModal(item.solicitud_horas, item.historial) , color:item.historial.includes('\n') ? "historial" : (item.solicitud_horas === "" ? "normal" : "activo") },
+        
         anio: item.anio,
-        semestre: item.semestre
+        semestre: item.semestre,
+        
+
       }))
       setData(newData)
       setModulos(['Todos', ...new Set(responseModulos.data.map(item => item.nombre))])
@@ -200,8 +198,8 @@ const HorasAsignadas = () => {
         Dropdown: item.Dropdown,
         Asignatura: item.Asignatura,
         HorasTotales: item.HorasTotales,
-        Boton: item.Boton,
-        id: item.id
+        Boton: item.Boton ,
+        id: item.id,
       }
     }
     )
@@ -210,8 +208,8 @@ const HorasAsignadas = () => {
   const filteredData = aplicarFiltros(data, filtros)
 
   const handleShowModal = (Solicitud, Cambioshoras) => {
-    setModalContent(`${Solicitud}`)
-    setModalContent2(`${Cambioshoras}`)
+    setModalContent(Solicitud)
+    setModalContent2(Cambioshoras)
     setShowModal(true)
   }
 
@@ -263,6 +261,7 @@ const HorasAsignadas = () => {
   return (
     <div className='principal'>
       <Navbar />
+      
       <div className='container Componente'>
         <div className='row mb-3'>
           <FiltroModulo
@@ -290,10 +289,10 @@ const HorasAsignadas = () => {
             handleSemestreSeleccionado={handleSemestreSeleccionado}
           />
           <div className='col-md-2'>
-            <button style={{height:'3rem', marginTop:'1rem'}} className='btn color-btn' onClick={() => setShowPopup(true)}>Subir Excel</button>
+            <button style={{ height: '3rem', marginTop: '1rem' }} className='btn color-btn' onClick={() => setShowPopup(true)}>Subir Excel</button>
           </div>
           <div className='col-md-2'>
-            <Button style={{height:'3rem', marginTop:'1rem'}} variant='danger' onClick={toggleModalEliminar}> Eliminar módulo </Button>
+            <Button style={{ height: '3rem', marginTop: '1rem' }} variant='danger' onClick={toggleModalEliminar}> Eliminar módulo </Button>
           </div>
         </div>
         <div className='row'>
@@ -302,7 +301,8 @@ const HorasAsignadas = () => {
             rows={filteredData}
             onDropdownChange={handleDropdownChange}
             onHorasChange={handleHorasChange}
-          />
+            />
+            {console.log(filteredData)}
         </div>
       </div>
       <CsvUploadPopup show={showPopup} onClose={() => setShowPopup(false)} updateModules={ObtenerDatos} />
@@ -340,15 +340,12 @@ const HorasAsignadas = () => {
           <Modal.Title><strong>Observaciones</strong></Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ fontWeight: 'bold', textDecoration: 'underline' }}> Solicitud de horas </Modal.Body>
-        <Modal.Body>{modalContent}</Modal.Body>
+        <Modal.Body>    <pre> { modalContent } </pre></Modal.Body>
         <Modal.Body style={{ fontWeight: 'bold', textDecoration: 'underline' }}> Cambios Realizados </Modal.Body>
-        <Modal.Body>{modalContent2}</Modal.Body>
+      <Modal.Body >   <pre> {modalContent2} </pre></Modal.Body>
         <Modal.Footer>
           <Button variant='secondary' onClick={handleCloseModal}>
             Cerrar
-          </Button>
-          <Button variant='primary' onClick={handleCloseModal}>
-            Guardar cambios
           </Button>
         </Modal.Footer>
       </Modal>

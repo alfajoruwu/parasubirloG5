@@ -1,6 +1,6 @@
-// components/PasswordReset.js
 import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import 'bootstrap/dist/css/bootstrap.min.css'
 import axiosInstance from '../../utils/axiosInstance'
 
 function PasswordReset () {
@@ -34,31 +34,48 @@ function PasswordReset () {
     }
   }
 
+  const volver = () => {
+    navigate('/')
+  }
+
   return (
-    <div>
-      <h2>Reset Password</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>New Password:</label>
-          <input
-            type='password'
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Confirm Password:</label>
-          <input
-            type='password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type='submit'>Reset Password</button>
-      </form>
-      {message && <p>{message}</p>}
+    <div className='login-page'>
+      <div className='Auth-form-container'>
+        <form className='Auth-form' onSubmit={handleSubmit}>
+          <div className='Auth-form-content'>
+            <h3 className='Auth-form-title'>Reset Password</h3>
+            <div className='form-group mt-3'>
+              <label>New Password:</label>
+              <input
+                type='password'
+                className='form-control mt-1'
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div className='form-group mt-3'>
+              <label>Confirm Password:</label>
+              <input
+                type='password'
+                className='form-control mt-1'
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div className='d-grid gap-2 mt-3'>
+              <button type='submit' className='btn btn-primary'>
+                Reset Password
+              </button>
+              <button type='button' className='btn btn-secondary' onClick={volver}>
+                Cancel
+              </button>
+            </div>
+            {message && <p className='text-center mt-2'>{message}</p>}
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

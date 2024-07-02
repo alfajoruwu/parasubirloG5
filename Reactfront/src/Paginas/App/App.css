@@ -1,6 +1,6 @@
 .color-btn{
-    background-color: #1ECCCC !important;
-    color: white !important;
+    background-color: #1ECCCC ;
+    color: white ;
     margin: 0.5rem;
     width: 9.5rem; /* Ancho del botón */
     height: 3rem;
@@ -8,8 +8,51 @@
     align-items: center; /* Centrar verticalmente */
     justify-content: center; /* Centrar horizontalmente */
     text-align: center; 
-    border-color:#1ECCCC !important;
+    border-color:#1ECCCC ;
 }
+
+.azul-button {
+    background-color: #1e98cc ;
+    color: white ;
+    margin: 0.5rem;
+    width: 9.5rem; /* Ancho del botón */
+    height: 3rem;
+    font-size: 1rem;
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    text-align: center; 
+    border-color:#1e98cc  ;
+  }
+  
+  .azul-button:hover {
+    background-color: #0ca3e4 ; /* Un color amarillo más oscuro para el hover */
+    color: white ;
+  }
+
+
+
+
+
+
+
+
+.yellow-button {
+    background-color: #efc34b ;
+    color: white ;
+    margin: 0.5rem;
+    width: 9.5rem; /* Ancho del botón */
+    height: 3rem;
+    font-size: 1rem;
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    text-align: center; 
+    border-color:#efc34b ;
+  }
+  
+  .yellow-button:hover {
+    background-color: #c6a323; /* Un color amarillo más oscuro para el hover */
+    color: white ;
+  }
 
 .linea{
     background-color: #1ECCCC;

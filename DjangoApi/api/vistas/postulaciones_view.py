@@ -85,9 +85,6 @@ class PostulacionesView(viewsets.GenericViewSet):
                 Postulacion.objects.filter(oferta=instance.oferta, estado=True).update(
                     estado=False
                 )
-                instance.oferta.ayudante.horas_aceptadas -= (
-                    instance.oferta.horas_ayudantia
-                )
                 instance.oferta.ayudante.save()
 
             instance.estado = nuevo_estado

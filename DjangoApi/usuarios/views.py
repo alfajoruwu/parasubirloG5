@@ -14,6 +14,8 @@ from django.conf import settings
 
 from .forms import UserCreationForm, UserCreationFormProfesor
 from .models import verificar, User
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 @csrf_exempt
@@ -26,11 +28,16 @@ def create_user(request):
 
         form = UserCreationForm(data)
         if form.is_valid():
-            form.save()
-            return JsonResponse(
-                {"message": "Usuario creado exitosamente."},
-                status=status.HTTP_201_CREATED,
-            )
+            try:
+                form.save()
+                return JsonResponse(
+                    {"message": "Usuario creado exitosamente."},
+                    status=status.HTTP_201_CREATED,
+                )
+            except Exception as e:
+                return JsonResponse(
+                    {"error": str(e)}, status=status.HTTP_400_BAD_REQUEST
+                )
         else:
             return JsonResponse(
                 {"errors": form.errors}, status=status.HTTP_400_BAD_REQUEST
@@ -101,7 +108,37 @@ def logout_view(request):
 
 @csrf_exempt
 def create_user_profesor_view(request):
+    # obtener el usuario que realiza la petición, con los headers de la petición
+    # los headers de la petición son "Bearer <token>"
     if request.method == "POST":
+        if not request.headers.get("Authorization") or not request.headers.get(
+            "Authorization"
+        ).startswith("Bearer "):
+            return JsonResponse(
+                {"error": "No se proporcionó un token de autorización."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        token = request.headers["Authorization"].split(" ")[1]
+        # validar el token con simplejwt
+        try:
+            access_token = AccessToken(token)
+            # Token is valid, you can access its payload
+            user_id = access_token["user_id"]
+            # Perform any additional validation or checks here
+        except (InvalidToken, TokenError):
+            return JsonResponse(
+                {"error": "Token de autorización inválido."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        user = User.objects.get(id=user_id)
+        if not user.groups.filter(name="Coordinador").exists():
+            return JsonResponse(
+                {"error": "No tienes permisos para realizar esta acción."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
@@ -144,6 +181,8 @@ def password_reset_confirm(request, uidb64=None, token=None):
                 confirm_password = data.get("confirm_password")
                 if new_password and confirm_password:
                     if new_password == confirm_password:
+                        print("new", new_password)
+                        print("user", user)
                         user.set_password(new_password)
                         user.save()
                         return JsonResponse(

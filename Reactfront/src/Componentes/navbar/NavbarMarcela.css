@@ -1,7 +1,7 @@
 .custom-navbar-color {
     background-color: #ffffff;
     height: 5rem;
-    position: relative; /* Para centrar el título con position: absolute */
+    position: relative;
 }
 
 .boton-seleccionado {
@@ -22,11 +22,12 @@
 }
 
 .colorTextoGris {
-    color: #e0e0e0 !important;
-    padding-top: 0rem;
+    color: #6d6d6d !important;
+    padding-top: 1rem;
     margin-right: var(--bs-navbar-brand-margin-end);
     font-size: var(--bs-navbar-brand-font-size);
     text-decoration: none !important;
+    cursor: default; /* Evita el cambio de cursor al pasar el mouse */
 }
 
 .iconoperfil {
@@ -34,7 +35,7 @@
     width: 4rem;
     border-radius: 50%;
     margin-right: 1rem;
-    background-color: #e0e0e0;
+    background-color: white; 
     border: none;
     display: flex;
     align-items: center;
@@ -49,10 +50,10 @@
 }
 
 .navbar-title {
-    font-size: 2rem; /* Aumenta el tamaño de la letra */
+    font-size: 2rem;
     font-weight: bold;
     color: #1ecccc;
-    position: absolute; /* Centrado */
-    left: 50%; /* Centrado */
-    transform: translateX(-50%); /* Centrado */
+    position: absolute; 
+    left: 50%; 
+    transform: translateX(-50%); 
 }

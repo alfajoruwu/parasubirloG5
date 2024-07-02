@@ -21,23 +21,23 @@ export default function Tabla ({ rows, titulos, mostrarBoton = true }) {
 
   return (
     <TableContainer>
-      <Table className='custom-table'  >
-      <div style={{height:"10px"}}></div>
-      <TableHead>
-    <TableRow >
-      {Object.keys(titulos).map((titulo, index) => (
-        <TableCell key={index}>
-          {titulos[titulo]} <div className='linea'  />
-        </TableCell>
-      ))}
-    </TableRow>
-    </TableHead>
-      <TableBody >
-        {modulos.map((modulo) => (
-          <Row key={modulo.Asignatura} modulo={modulo} ofertas={ofertas} mostrarBoton={mostrarBoton} />
-        ))}
-      </TableBody>
-    </Table>
-  </TableContainer>
+      <Table className='custom-table'>
+        <div style={{ height: '10px' }} />
+        <TableHead>
+          <TableRow>
+            {Object.keys(titulos).map((titulo, index) => (
+              <TableCell key={index}>
+                {titulos[titulo]} <div className='linea' />
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {modulos.map((modulo) => (
+            <Row key={modulo.Asignatura} modulo={modulo} ofertas={ofertas} mostrarBoton={mostrarBoton} />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   )
 }

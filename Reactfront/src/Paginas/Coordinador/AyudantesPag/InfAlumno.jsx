@@ -117,9 +117,6 @@ const InfAlumno = () => {
         </div>
         <div className='row mt-3 justify-content-center'>
           <Col xs='auto' className='d-flex justify-content-center'>
-            <NavLink to='/' className='btn color-btn mr-2'>
-              Volver
-            </NavLink>
             <Button className='btn color-btn' onClick={exportData}>
               Exportar a Excel
             </Button>

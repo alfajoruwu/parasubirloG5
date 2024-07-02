@@ -5,6 +5,17 @@ from django.contrib.auth.models import (
     BaseUserManager,
     Group,
 )
+from django.core.exceptions import ValidationError
+from datetime import timedelta
+from django.utils import timezone
+from itertools import cycle
+
+
+def digito_verificador(rut):
+    reversed_digits = map(int, reversed(str(rut)))
+    factors = cycle(range(2, 8))
+    s = sum(d * f for d, f in zip(reversed_digits, factors))
+    return (-s) % 11 if (-s) % 11 < 10 else "K"
 
 
 # Create your CustomUserManager here.
@@ -12,6 +23,12 @@ class CustomUserManager(BaseUserManager):
     def _create_user(self, password, run, **extra_fields):
         if not password:
             raise ValueError("Contraseña no puede ser vacía.")
+
+        run_aux = run.replace(".", "").replace("-", "").replace(" ", "")
+        run_aux, digito = run_aux[:-1], run_aux[-1]
+
+        if str(digito_verificador(int(run_aux))) != digito:
+            raise ValueError("Run no valido")
 
         user = self.model(
             run=run,
@@ -29,9 +46,18 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, password, run, **extra_fields):
         # busca codigo de verificacion
         codigo = verificar.objects.filter(codigo=extra_fields.pop("codigo"))
-        if not codigo.exists() and codigo.correo != extra_fields.get("email"):
+        if not codigo.exists():
             raise ValueError("Codigo de verificacion no valido")
         codigo = codigo.first()
+        codigo.clean()
+        if codigo.correo != extra_fields.get("email"):
+            print("Correo no coincide")
+            raise ValueError("Codigo de verificacion no valido")
+
+        if not extra_fields.get("email").endswith("@alumnos.utalca.cl"):
+            raise ValidationError(
+                "El dominio del correo electrónico debe ser @alumnos.utalca.cl"
+            )
 
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_active", True)
@@ -49,6 +75,10 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_active", True)
         extra_fields.setdefault("is_superuser", False)
+        if not extra_fields.get("email").endswith("@utalca.cl"):
+            raise ValidationError(
+                "El dominio del correo electrónico debe ser @utalca.cl"
+            )
         return self._create_user(password, run, **extra_fields)
 
     def create_user_admin(self, password, run, **extra_fields):
@@ -77,15 +107,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     charla = models.BooleanField(default=False)
     Promedio = models.CharField(max_length=50, blank=True)
 
-    is_staff = models.BooleanField(
-        default=True
-    )  # must needed, otherwise you won't be able to loginto django-admin.
-    is_active = models.BooleanField(
-        default=True
-    )  # must needed, otherwise you won't be able to loginto django-admin.
-    is_superuser = models.BooleanField(
-        default=False
-    )  # this field we inherit from PermissionsMixin.
+    is_staff = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 
@@ -100,5 +124,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 # modelo para verificar
 class verificar(models.Model):
     correo = models.EmailField(max_length=100)
-    codigo = models.CharField(max_length=100)
+    codigo = models.CharField(max_length=6)
     fecha = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        # si ya existe un codigo de verificacion para el correo, se eliminan los anteriores (no el actual)
+        verificar.objects.filter(correo=self.correo).exclude(
+            codigo=self.codigo
+        ).delete()
+
+        # si el codigo de verificacion es anterior a 5 minutos
+        if self.fecha < timezone.now() - timedelta(minutes=5):
+            raise ValueError("Codigo de verificacion expirado")
+        return self

@@ -3,13 +3,24 @@ from .models import Modulo, Postulacion, Oferta, Resolucion
 
 
 class OfertaAdmin(admin.ModelAdmin):
-    list_display = ("id", "modulo", "estado", "ayudante", "resolucion")
+    list_display = (
+        "id",
+        "modulo",
+        "estado",
+        "ayudante",
+        "resolucion",
+        "fecha_creacion",
+        "fecha_modificacion",
+    )
     search_fields = (
         "id",
         "modulo__nombre",
         "modulo__profesor_asignado__nombre_completo",
     )
-    list_filter = ("estado", "modulo__profesor_asignado__nombre_completo")
+    list_filter = (
+        "estado",
+        "modulo__profesor_asignado__nombre_completo",
+    )
     list_editable = ["estado"]
 
 

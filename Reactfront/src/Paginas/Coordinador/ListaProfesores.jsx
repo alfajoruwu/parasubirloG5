@@ -12,7 +12,7 @@ const ProfesorList = () => {
   const [profesores, setProfesores] = useState([])
   const [error, setError] = useState(null)
   const [showModal, setShowModal] = useState(false)
-  const [newProfesor, setNewProfesor] = useState({ run: '', email: '', password: '', nombre_completo: '' })
+  const [newProfesor, setNewProfesor] = useState({ run: '', email: '', nombre_completo: '' })
   const [deleteModal, setDeleteModal] = useState({ show: false, profesorId: null })
 
   const Tablatitulos = ['Nombre del profesor', 'Email', 'Acciones']
@@ -53,8 +53,7 @@ const ProfesorList = () => {
     const data = {
       run: newProfesor.run,
       nombre_completo: newProfesor.nombre_completo,
-      email: newProfesor.email,
-      password: newProfesor.password
+      email: newProfesor.email
     }
 
     try {
@@ -66,11 +65,29 @@ const ProfesorList = () => {
         ObtenerProfesores()
       } else {
         console.error('Error al crear el profesor:', response)
-        toast.error('Error al crear el profesor', { position: 'bottom-right' })
       }
     } catch (error) {
       console.error('Error al crear el profesor:', error)
-      toast.error('Error al crear el profesor', { position: 'bottom-right' })
+      if (error.response && error.response.status >= 400 && error.response.status < 500) {
+        if (error.response.data) {
+          if (error.response.data.error) {
+            toast.error(error.response.data.error, { position: 'bottom-right' })
+          } if (error.response.data.errors) {
+            console.log('test')
+            console.log(error.response.data.errors)
+            for (const key in error.response.data.errors) {
+              console.log(`${key}: ${error.response.data.errors[key]}`)
+              toast.error(`${key}: ${error.response.data.errors[key]}`, { position: 'bottom-right' })
+            }
+          } else {
+            toast.error('Error datos incorrectos', { position: 'bottom-right' })
+          }
+        } else {
+          toast.error('Error al crear el profesor, el RUN ya existe', { position: 'bottom-right' })
+        }
+      } else {
+        toast.error('Error desconocido', { position: 'bottom-right' })
+      }
     }
   }
 
@@ -88,6 +105,25 @@ const ProfesorList = () => {
     ),
     id: profesor.id
   }))
+
+  const formatearRun = (e) => {
+    const run = e.target.value
+    let runFormateado = run.replace(/[^0-9kK]/g, '')
+    if (runFormateado.length > 9) {
+      runFormateado = runFormateado.slice(0, -1)
+      return
+    }
+    if (runFormateado.length > 1) {
+      runFormateado = runFormateado.slice(0, -1) + '-' + runFormateado.slice(-1)
+    }
+    if (runFormateado.length > 6) {
+      runFormateado = runFormateado.slice(0, -5) + '.' + runFormateado.slice(-5)
+    }
+    if (runFormateado.length > 9) {
+      runFormateado = runFormateado.slice(0, -9) + '.' + runFormateado.slice(-9)
+    }
+    setNewProfesor({ ...newProfesor, run: runFormateado })
+  }
 
   return (
     <div className='principal'>
@@ -121,7 +157,7 @@ const ProfesorList = () => {
                 placeholder='Ingrese RUN'
                 name='run'
                 value={newProfesor.run}
-                onChange={handleChange}
+                onChange={formatearRun}
                 required
               />
             </Form.Group>
@@ -147,22 +183,11 @@ const ProfesorList = () => {
                 required
               />
             </Form.Group>
-            <Form.Group controlId='formPassword'>
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type='password'
-                placeholder='Ingrese password'
-                name='password'
-                value={newProfesor.password}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
             <Modal.Footer>
               <Button variant='secondary' onClick={() => setShowModal(false)}>
                 Cerrar
               </Button>
-              <Button variant='primary' type='submit'>
+              <Button variant='primary' type='submit' disabled={!newProfesor.run || !newProfesor.nombre_completo || !newProfesor.email}>
                 Guardar Cambios
               </Button>
             </Modal.Footer>

@@ -30,7 +30,6 @@ class CustomUserAdmin(BaseUserAdmin):
                     "n_cuenta",
                     "banco",
                     "n_contacto",
-                    "horas_aceptadas",
                     "riesgo_academico",
                     "charla",
                 )

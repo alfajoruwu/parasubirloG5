@@ -1,14 +1,16 @@
 import React, { useState, useContext } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { useNavigate } from 'react-router-dom'
+
 import axiosInstance from '../../utils/axiosInstance'
 import { DataContext } from '../../Datos/DataContext'
 
 export default function VerifyCode (props) {
   const [codigo, setCodigo] = useState('')
   const { usuario } = useContext(DataContext)
+  const navigate = useNavigate()
   const verificarCodigo = (event) => {
     event.preventDefault()
-    // Aquí puedes enviar el código de verificación al backend para su validación
     const data = {
       run: usuario.run,
       nombre_completo: usuario.nombre_completo,
@@ -16,22 +18,26 @@ export default function VerifyCode (props) {
       email: usuario.email,
       password: usuario.password
     }
-    axiosInstance.post('/create/', data)
+
+    axiosInstance
+      .post('/create/', data)
       .then((response) => {
         if (response.status === 201) {
           // Si el código es válido, redirige a la página deseada
           // recargar la pagina
           console.log('Código válido')
-          window.location.reload()
+          props.volver()
         } else {
-          // Manejar el caso en el que el código no sea válido
           console.log('Código inválido')
         }
       })
       .catch((error) => {
-        // Manejar errores de la solicitud
         console.error('Error al verificar el código:', error)
       })
+  }
+
+  const volver = () => {
+    props.volver()
   }
 
   return (
@@ -50,8 +56,11 @@ export default function VerifyCode (props) {
             />
           </div>
           <div className='d-grid gap-2 mt-3'>
-            <button type='submit' className='btn btn-primary'>
+            <button type='submit' className='btn btn-custom'>
               Verificar
+            </button>
+            <button type='button' className='btn btn-secondary' onClick={volver}>
+              Cancelar
             </button>
           </div>
         </div>

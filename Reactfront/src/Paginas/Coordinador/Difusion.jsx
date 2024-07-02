@@ -10,6 +10,7 @@ import FiltroEstado from '../../Componentes/Filtros/FiltroEstado'
 import FiltroFecha from '../../Componentes/Filtros/FiltroFecha'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { Modal, Button } from 'react-bootstrap'
 
 const Difusion = () => {
   const [data, setData] = useState([])
@@ -21,6 +22,10 @@ const Difusion = () => {
   const [estadoSeleccionado, setEstadoSeleccionado] = useState('Todos')
   const [fechaInicio, setFechaInicio] = useState(null)
   const [fechaFin, setFechaFin] = useState(null)
+  const [showModal, setShowModal] = useState(false)
+
+  const handleClose = () => setShowModal(false)
+  const handleShow = () => setShowModal(true)
 
   const obtenerDatos = async () => {
     try {
@@ -30,7 +35,7 @@ const Difusion = () => {
         Asignatura: item.modulo,
         NombreProfesor: item.profesor,
         HorasTotales: item.horas_ayudantia,
-        FechaCreacion: item.fecha_creacion,
+        FechaCreacion: item.fecha_modificacion,
         id: item.id
       }))
       setData(newData)
@@ -112,12 +117,17 @@ const Difusion = () => {
     obtenerDatos()
   }
 
+  const confirmarCambioEstado = () => {
+    handleClose()
+    cambiarEstado()
+  }
+
   const titulos = {
     estado: 'Estado',
     Asignatura: 'Módulo',
     Nprofesor: 'Nombre profesor',
     HorasTotales: 'Horas totales',
-    FechaCreacion: 'Fecha de creación',
+    FechaCreacion: 'Fecha de modificación',
     Vacio: 'Observaciones',
     publicar: 'Publicar'
   }
@@ -146,12 +156,29 @@ const Difusion = () => {
           />
         </div>
         <div className='d-flex mb-3'>
-          <button className='btn btn-danger ms-auto' onClick={cambiarEstado}>Despublicar ofertas en pantalla</button>
+          <button className='btn btn-danger ms-auto' onClick={handleShow}>Despublicar ofertas en pantalla</button>
         </div>
         <TablaCoordinador2 titulos={titulos} rows={filteredData} actualizarDatos={obtenerDatos} />
         <div className='row justify-content-center mt-3' />
         <ToastContainer />
       </div>
+
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Advertencia</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Estás seguro de que deseas despublicar las ofertas en pantalla?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='secondary' onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button variant='danger' onClick={confirmarCambioEstado}>
+            Despublicar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }

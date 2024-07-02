@@ -44,7 +44,7 @@ const NavbarProfesor = () => {
             <img
               src={logo}
               alt="Logo"
-              height="60"
+              height="80"
               width="auto"
               className="d-inline-block align-top"
             />
@@ -56,13 +56,7 @@ const NavbarProfesor = () => {
                 className={({ isActive }) => `nav-link colorTexto${isActive ? ' active' : ''}`}
                 to="/PublicarAyudantias"
               >
-                Publicar ayudantias
-              </NavLink>
-              <NavLink
-                className={({ isActive }) => `nav-link colorTexto${isActive ? ' active' : ''}`}
-                to="/DatosProfesor"
-              >
-                Datos profesor
+                Publicar ayudantías
               </NavLink>
               <NavLink
                 className={({ isActive }) => `nav-link colorTexto${isActive ? ' active' : ''}`}
@@ -70,15 +64,21 @@ const NavbarProfesor = () => {
               >
                 Ver Postulantes
               </NavLink>
+              <NavLink
+                className={({ isActive }) => `nav-link colorTexto${isActive ? ' active' : ''}`}
+                to="/DatosProfesor"
+              >
+                Datos profesor
+              </NavLink>
             </Nav>
             <Nav>
-              <span className="nav-link colorTextoGris">{nombre}</span>
+              <div className="colorTextoGris">{nombre}</div>
               <button onClick={handleLogout} className="iconoperfil">
                 <img
                   src={cerrarSesion}
                   alt="Logout"
-                  height="60"
-                  width="60"
+                  height="35"
+                  width="35"
                   className="logout-icon"
                 />
               </button>
