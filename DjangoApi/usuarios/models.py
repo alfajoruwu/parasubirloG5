@@ -105,8 +105,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     n_contacto = models.CharField(max_length=12, blank=True)
     riesgo_academico = models.BooleanField(default=False)
     charla = models.BooleanField(default=False)
-    Promedio = models.CharField(max_length=50, blank=True)
-
+    Promedio = models.CharField(max_length=50, blank=True, default="0.0")
     is_staff = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
