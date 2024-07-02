@@ -4,9 +4,9 @@ from usuarios.models import User
 
 
 def create_superuser(apps, schema_editor):
-    username = os.getenv("SUPERUSER_USERNAME", "test_admin")
+    username = os.getenv("SUPERUSER_USERNAME", "11.111.111-1")
     email = os.getenv("SUPERUSER_EMAIL", "admin@example.com")
-    password = os.getenv("SUPERUSER_PASSWORD", "admin_password")
+    password = os.getenv("SUPERUSER_PASSWORD", "AdminAyud@nti@s")
     User.objects.create_superuser(run=username, email=email, password=password)
 
 
