@@ -55,6 +55,7 @@ function Row (props) {
       AlertaExito(asignatura)
       console.log(response.data)
     } catch (error) {
+      toast.error('Error, falta completar datos personales', { position: 'bottom-right' })
       console.error('Error al enviar la solicitud:', error)
     }
   }

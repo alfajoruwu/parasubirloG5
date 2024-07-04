@@ -34,10 +34,13 @@ class OfertasView(viewsets.GenericViewSet):
         if self.request.user.groups.filter(name="Coordinador").exists():
             return Oferta.objects.all()
         else:
+            if Modulo.objects.count() == 0:
+                return Oferta.objects.none()
             anio_maximo = Modulo.objects.latest("anio").anio
             semestre_maximo = Modulo.objects.latest("semestre").semestre
-            return Oferta.objects.filter(estado=True, modulo__anio=anio_maximo, modulo__semestre=semestre_maximo)
-        
+            return Oferta.objects.filter(
+                estado=True, modulo__anio=anio_maximo, modulo__semestre=semestre_maximo
+            )
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -45,13 +48,18 @@ class OfertasView(viewsets.GenericViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, *args, **kwargs):
-        if self.request.user.groups.filter(name="Profesor").exists() or self.request.user.groups.filter(name="Coordinador").exists():
+        if (
+            self.request.user.groups.filter(name="Profesor").exists()
+            or self.request.user.groups.filter(name="Coordinador").exists()
+        ):
             instance = self.get_object()
             serializer = self.get_serializer(instance, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            try:
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+            except Exception as e:
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
 
         return Response(status=status.HTTP_403_FORBIDDEN)
 
@@ -59,16 +67,22 @@ class OfertasView(viewsets.GenericViewSet):
         if self.request.user.groups.filter(name="Profesor").exists():
             instance = self.get_object()
             serializer = self.get_serializer(instance, data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            try:
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+            except Exception as e:
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
     def create(self, request, *args, **kwargs):
         if self.request.user.groups.filter(name="Profesor").exists():
             serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            try:
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+            except Exception as e:
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_403_FORBIDDEN)
 

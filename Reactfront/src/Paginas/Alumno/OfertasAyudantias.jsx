@@ -39,7 +39,7 @@ const OfertasAyudantias = () => {
         }))
         setData(newData)
       } catch (error) {
-        setError(error)
+        setError(error)        
       }
     }
 

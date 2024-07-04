@@ -14,7 +14,7 @@ function PasswordReset () {
     e.preventDefault()
 
     if (newPassword !== confirmPassword) {
-      setMessage('Passwords do not match')
+      setMessage('Contraseñas no coinciden')
       return
     }
 
@@ -43,9 +43,9 @@ function PasswordReset () {
       <div className='Auth-form-container'>
         <form className='Auth-form' onSubmit={handleSubmit}>
           <div className='Auth-form-content'>
-            <h3 className='Auth-form-title'>Reset Password</h3>
+            <h3 className='Auth-form-title'>Recuperar contraseña</h3>
             <div className='form-group mt-3'>
-              <label>New Password:</label>
+              <label>Nueva contraseña:</label>
               <input
                 type='password'
                 className='form-control mt-1'
@@ -55,7 +55,7 @@ function PasswordReset () {
               />
             </div>
             <div className='form-group mt-3'>
-              <label>Confirm Password:</label>
+              <label>Confirmar contraseña:</label>
               <input
                 type='password'
                 className='form-control mt-1'
@@ -66,10 +66,10 @@ function PasswordReset () {
             </div>
             <div className='d-grid gap-2 mt-3'>
               <button type='submit' className='btn btn-primary'>
-                Reset Password
+                Asignar nueva contraseña
               </button>
               <button type='button' className='btn btn-secondary' onClick={volver}>
-                Cancel
+                Cancelar
               </button>
             </div>
             {message && <p className='text-center mt-2'>{message}</p>}

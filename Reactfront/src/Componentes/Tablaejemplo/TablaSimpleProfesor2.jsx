@@ -77,18 +77,7 @@ function Row({ row, titulos }) {
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={Object.keys(row).length}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-              <div className="additional-info">
-                {console.log(row)}
-                <div><strong>Disponibilidad:</strong> {row.disponibilidad}</div>
-                <div><strong>Nota mínima:</strong> {row.nota_minima}</div>
-                <div><strong>Tareas:</strong> {row.tareas}</div>
-                <div><strong>Otros:</strong> {row.otros}</div>
-                <div><strong>Observaciones:</strong> {row.observaciones}</div>
-              </div>
-            </Box>
-          </Collapse>
+          
         </TableCell>
       </TableRow>
     </>

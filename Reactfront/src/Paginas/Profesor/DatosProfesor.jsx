@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import '../App/App.css'
 import Navbar from '../../Componentes/navbar/NavbarProfesor'
 import axiosInstance from '../../utils/axiosInstance'
+import { toast, ToastContainer } from 'react-toastify'
 
 const DatosProfesor = () => {
   const [nombre, setNombre] = useState('')
@@ -28,6 +29,7 @@ const DatosProfesor = () => {
   const LlenarDatos = async () => {
     if (!nombre || !correo || !contacto) {
       setErrorMessage('Todos los campos deben ser rellenados.')
+      toast.error('Todos los campos deben ser rellenados.', { position: 'bottom-right' })
       return
     }
 
@@ -39,10 +41,12 @@ const DatosProfesor = () => {
           otro_contacto: contacto
         }
       )
-      setErrorMessage('') 
+      setErrorMessage('')
+      toast.success('Datos guardados exitosamente.', { position: 'bottom-right' })
     } catch (error) {
       console.error('Error al enviar la solicitud:', error)
       setErrorMessage('Error al enviar la solicitud. Inténtelo de nuevo.')
+      toast.error('Error al enviar la solicitud. Inténtelo de nuevo.', { position: 'bottom-right' })
     }
   }
 
@@ -108,6 +112,7 @@ const DatosProfesor = () => {
           <button onClick={LlenarDatos} className='btn color-btn'>Guardar</button>
         </div>
       </div>
+      <ToastContainer />
     </div>
   )
 }

@@ -186,25 +186,27 @@ def password_reset_confirm(request, uidb64=None, token=None):
                         user.set_password(new_password)
                         user.save()
                         return JsonResponse(
-                            {"message": "Password has been reset."}, status=200
+                            {"message": "Tu contraseña ha sido cambiada."}, status=200
                         )
                     else:
                         return JsonResponse(
-                            {"error": "Passwords do not match."}, status=400
+                            {"error": "Las contraseñas no coinciden."}, status=400
                         )
                 else:
                     print("new", new_password)
                     print("confirm", confirm_password)
                     return JsonResponse(
-                        {"error": "New password and confirm password are required."},
+                        {"error": "Los campos de contraseña son requeridos."},
                         status=400,
                     )
             return JsonResponse(
-                {"message": "Token is valid. You can now reset your password."},
+                {"message": "El token es válido.", "uid": uidb64, "token": token},
                 status=200,
             )
         else:
-            return JsonResponse({"error": "Invalid or expired token."}, status=400)
+            return JsonResponse(
+                {"error": "El token no es válido o ha expirado."}, status=400
+            )
     return JsonResponse({"error": "Invalid request."}, status=400)
 
 
@@ -223,11 +225,24 @@ def password_reset_request(request):
                     token = default_token_generator.make_token(user)
                     uid = urlsafe_base64_encode(force_bytes(user.pk))
                     url = f"{settings.FRONTEND_URL}/reset/{uid}/{token}/"
-                    message = f"Hi {user.run},\nClick the link below to reset your password:\n{url}"
-                    enviar_correo(user.email, "Password reset request", message)
+                    message = (
+                        f"Hola {user.nombre_completo},\n\n"
+                        "Hemos recibido una solicitud para recuperar tu contraseña.\n"
+                        f"Si no has solicitado esto, ignora este mensaje.\n\n"
+                        f"Para recuperar tu contraseña, visita el siguiente enlace:\n{url}\n\n"
+                        "Gracias,\n"
+                        "Este es un mensaje automático, por favor no respondas a este correo.\n"
+                    )
+                    enviar_correo(
+                        user.email, "Solicitud para recuperar contraseña", message
+                    )
             return JsonResponse(
-                {"message": "Password reset email has been sent."}, status=200
+                {
+                    "message": "Si el correo proporcionado es válido, recibirás un correo con instrucciones para recuperar tu contraseña."
+                },
             )
         else:
-            return JsonResponse({"error": "Email is required."}, status=400)
+            return JsonResponse(
+                {"error": "El campo de correo es requerido."}, status=400
+            )
     return JsonResponse({"error": "Invalid request method."}, status=405)

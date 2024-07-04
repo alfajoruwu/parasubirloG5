@@ -29,6 +29,9 @@
     color: white ;
   }
 
+  .seleccionable{
+    cursor: pointer;
+  }
 
 
 

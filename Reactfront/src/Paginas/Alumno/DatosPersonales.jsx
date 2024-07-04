@@ -4,9 +4,10 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import '../App/App.css'
 import NavbarAlumno from '../../Componentes/navbar/NavbarAlumno'
 import axiosInstance from '../../utils/axiosInstance'
+import { toast, ToastContainer } from 'react-toastify'
 
 const DatosPersonales = () => {
-  const [Promedio,SetPromedio] = useState('')
+  const [Promedio, SetPromedio] = useState('')
 
   const [nombre, setNombre] = useState('')
   const [correo, setCorreo] = useState('')
@@ -53,25 +54,25 @@ const DatosPersonales = () => {
       const riesgo = document.getElementById('riesgo').checked
       const charlagenero = document.getElementById('charlagenero').checked
 
-      const response = await axiosInstance.patch('Datos/uwu/',
-        {
-          nombre_completo: nombre,
-          email: correo,
-          otro_contacto: OtroContacto,
-          matricula,
-          tipo_cuenta: tipoCuenta,
-          n_cuenta: NCuenta,
-          banco,
-          n_contacto: NContacto,
-          riesgo_academico: riesgo,
-          charla: charlagenero,
-          Promedio
-        }
-      )
+      const response = await axiosInstance.patch('Datos/uwu/', {
+        nombre_completo: nombre,
+        email: correo,
+        otro_contacto: OtroContacto,
+        matricula,
+        tipo_cuenta: tipoCuenta,
+        n_cuenta: NCuenta,
+        banco,
+        n_contacto: NContacto,
+        riesgo_academico: riesgo,
+        charla: charlagenero,
+        Promedio
+      })
 
       console.log(response.data)
+      toast.success('Datos guardados exitosamente.', { position: 'bottom-right' })
     } catch (error) {
       console.error('Error al enviar la solicitud:', error)
+      toast.error('Error al enviar la solicitud. Inténtelo de nuevo.', { position: 'bottom-right' })
     }
   }
 
@@ -111,7 +112,7 @@ const DatosPersonales = () => {
                 </div>
 
                 <div className='col'>
-                  <input class='form-check-input' type='checkbox' checked={riesgo} onChange={(e) => setRiesgo(e.target.value)} id='riesgo' />
+                  <input class='form-check-input' type='checkbox' checked={riesgo} onChange={(e) => setRiesgo(e.target.checked)} id='riesgo' />
 
                 </div>
 
@@ -125,7 +126,7 @@ const DatosPersonales = () => {
                 </div>
 
                 <div className='col'>
-                  <input class='form-check-input' type='checkbox' checked={charlagenero} onChange={(e) => setCharlagenero(e.target.value)} id='charlagenero' />
+                  <input class='form-check-input' type='checkbox' checked={charlagenero} onChange={(e) => setCharlagenero(e.target.checked)} id='charlagenero' />
 
                 </div>
 
@@ -302,7 +303,7 @@ const DatosPersonales = () => {
           <button className='btn color-btn' onClick={LlenarDatos}> Guardar</button>
 
         </div>
-
+        <ToastContainer />
       </div>
     </>
   )

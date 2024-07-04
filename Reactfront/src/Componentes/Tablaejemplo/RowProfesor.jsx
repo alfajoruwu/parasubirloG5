@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import { TableCell, TableRow, tableRowClasses } from '@mui/material'
+import React, { useCallback, useEffect, useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify'
+import { TableCell, TableRow } from '@mui/material'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
-import '../../Paginas/App/App.css'
 import TextField from '@mui/material/TextField'
+
+import '../../Paginas/App/App.css'
 import './Tabla.css'
 import './TablaSimplev2.css'
 import axiosInstance from '../../utils/axiosInstance'
-import TextareaAutosize from '@mui/material/TextareaAutosize'
 
 export default function Row ({ modulo }) {
   const [Nayudantes, setNayudantes] = useState(modulo.ofertas.length)
@@ -24,7 +25,6 @@ export default function Row ({ modulo }) {
 
   const [showModal, setShowModal] = useState(false)
   const [modalContent, setModalContent] = useState('')
-  const [modalContent2, setModalContent2] = useState('')
 
   const [showSolicitudModal, setShowSolicitudModal] = useState(false)
   const [solicitudComentario, setSolicitudComentario] = useState('')
@@ -34,6 +34,18 @@ export default function Row ({ modulo }) {
   const handleShowModal = (mensaje) => {
     setModalContent(mensaje)
     setShowModal(true)
+  }
+
+  const debounce = (func, delay) => {
+    let timeoutId
+    return (...args) => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+      timeoutId = setTimeout(() => {
+        func(...args)
+      }, delay)
+    }
   }
 
   const handleCloseModal = () => {
@@ -54,6 +66,7 @@ export default function Row ({ modulo }) {
       if (oferta.horas_ayudantia === null || oferta.disponibilidad === '' || oferta.nota_mini === null || oferta.tareas === '') {
         return
       }
+      toast.warning('Creando oferta, no se guardarán cambios hasta que se haya creado la oferta')
       oferta.isLoading = true
       axiosInstance.post('Ofertas/', {
         modulo: modulo.id,
@@ -65,21 +78,49 @@ export default function Row ({ modulo }) {
       }).then(response => {
         oferta.id = response.data.id
         oferta.isLoading = false
+        toast.success('Oferta creada', { position: 'bottom-right' })
       }).catch(error => {
         console.log(error)
         oferta.isLoading = false
       })
     } else {
-      axiosInstance.put('Ofertas/' + oferta.id + '/', {
-        modulo: modulo.id,
-        horas_ayudantia: oferta.horas_ayudantia,
-        disponibilidad: oferta.disponibilidad,
-        nota_mini: oferta.nota_mini,
-        tareas: oferta.tareas,
-        otros: oferta.otros
-      })
+      debuncedActualizarOferta(oferta)
     }
   }
+
+  const actualizarOferta = (oferta) => {
+    axiosInstance.put('Ofertas/' + oferta.id + '/', {
+      modulo: modulo.id,
+      horas_ayudantia: oferta.horas_ayudantia,
+      disponibilidad: oferta.disponibilidad,
+      nota_mini: oferta.nota_mini,
+      tareas: oferta.tareas,
+      otros: oferta.otros
+    }).then(response => {
+      toast.success('Oferta actualizada', { position: 'bottom-right' })
+    }).catch(error => {
+      console.log(error)
+      if (error.response.status === 400) {
+        if (error.response.data?.detail) {
+          if (error.response.data.detail.startsWith('{\'')) {
+            // ejemplo de error: "{'disponibilidad': [ErrorDetail(string='Asegúrese de que este campo no tenga más de 100 caracteres.', code='max_length')]}"
+            // sacamos lo que este entre las primeras y segundas comillas simples, ignorando el resto y colocando en mayusculas la primera letra
+            // para que quede algo como: "Disponibilidad: Asegúrese de que este campo no tenga más de 100 caracteres."
+            const cleanedError = error.response.data.detail.split('\'')[1].charAt(0).toUpperCase() + error.response.data.detail.split('\'')[1].slice(1) + ': ' + error.response.data.detail.split('\'')[3]
+            toast.error(cleanedError, { position: 'bottom-right' })
+          } else {
+            const cleanedError = error.response.data.detail.replace(/[[\]']/g, '')
+            toast.error(cleanedError, { position: 'bottom-right' })
+          }
+        } else {
+          toast.error('Error al actualizar la oferta', { position: 'bottom-right' })
+        }
+      } else {
+        toast.error('Error desconocido', { position: 'bottom-right' })
+      }
+    })
+  }
+  const debuncedActualizarOferta = useCallback(debounce(actualizarOferta, 1000), [])
 
   const crearOferta = () => {
     setOfertas([
@@ -97,7 +138,12 @@ export default function Row ({ modulo }) {
   const borrarOfertas = () => {
     modulo.ofertas.slice(Nayudantes).forEach(oferta => {
       if (oferta.id !== null) {
-        axiosInstance.delete('Ofertas/' + oferta.id)
+        axiosInstance.delete('Ofertas/' + oferta.id).then(response => {
+          toast.success('Oferta eliminada', { position: 'bottom-right' })
+        }).catch(error => {
+          console.log(error)
+          toast.error('Error al eliminar la oferta', { position: 'bottom-right' })
+        })
         oferta.id = null
       }
     })
@@ -159,14 +205,14 @@ export default function Row ({ modulo }) {
       axiosInstance.patch(`Modulos/${solicitudModuloId}/`, {
         solicitud_horas: solicitudComentario
       }).then(response => {
-        alert('Solicitud enviada')
+        toast.success('Solicitud enviada', { position: 'bottom-right' })
         handleCloseSolicitudModal()
       }).catch(error => {
         console.error('Error al enviar la solicitud:', error)
-        alert('Error al enviar la solicitud')
+        toast.error('Error al enviar la solicitud', { position: 'bottom-right' })
       })
     } else {
-      alert('No se envió la solicitud')
+      toast.error('Debes ingresar un comentario', { position: 'bottom-right' })
     }
   }
 
@@ -188,8 +234,7 @@ export default function Row ({ modulo }) {
   }
   return (
     <>
-      {console.log(modulo)}
-      <TableRow className='module-header table-row-margin' onClick={toggleModulo}>
+      <TableRow className='module-header table-row-margin seleccionable' onClick={toggleModulo}>
 
         <TableCell>
           <div className='primero container justify-content-center align-items-center d-flex'> {modulo.Asignatura} </div>
@@ -231,7 +276,7 @@ export default function Row ({ modulo }) {
         <>
           {ofertas.map((oferta, index) => (
             <React.Fragment key={index}>
-              <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} className='offer-header' onClick={() => toggleOferta(index)}>
+              <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} className='offer-header seleccionable' onClick={() => toggleOferta(index)}>
 
                 <TableCell>
                   <div style={{ backgroundColor: '#018d8d' }} className=' primero container justify-content-center align-items-center d-flex'>
@@ -244,8 +289,13 @@ export default function Row ({ modulo }) {
                 <TableCell>
                   <div className='container d-flex'>
                     <label htmlFor={`Estado_${index}`}>Estado:</label>
-                    <div className='demas container d-flex justify-content-center align-items-center'>{oferta.estado ? 'Publicada' : 'Pendiente'} </div>
 
+                    <div
+                      className='demas container d-flex justify-content-center align-items-center'
+
+                    >
+                      {oferta.estado ? 'Publicada' : 'Pendiente'}
+                    </div>
                   </div>
                 </TableCell>
 
@@ -267,12 +317,12 @@ export default function Row ({ modulo }) {
                 <TableCell>
                   <button
                     onClick={(e) => {
-                        e.stopPropagation() // Detiene la propagación del evento
-                        handleShowModal(oferta.observaciones ? oferta.observaciones : 'no hay observaciones')
-                      }}
+                      e.stopPropagation() // Detiene la propagación del evento
+                      handleShowModal(oferta.observaciones ? oferta.observaciones : 'no hay observaciones')
+                    }}
                     className={oferta.observaciones ? 'btn btn-amarillo' : 'final btn color-btn'}
                   >
-                      Observaciones
+                    Observaciones
                   </button>
                 </TableCell>
 
@@ -283,77 +333,77 @@ export default function Row ({ modulo }) {
 
                     <TableCell className=''>
 
-                        <div className='col interior interno' style={{ height: '6rem' }}>
-                          <div className='titulo container justify-content-center align-items-center d-flex'>Disponibilidad </div>
-                          <div className='titulo container justify-content-center align-items-center'>
-                            <label htmlFor={`disponibilidad_${index}`} className='sr-only' />
-                            <textarea
-                              id={`disponibilidad_${index}`}
-                              name={`disponibilidad_${index}`}
-                              className='textoarea'
-                              value={oferta.disponibilidad}
-                              onChange={(e) => cambiarDisponibilidad(e, index)}
+                      <div className='col interior interno' style={{ height: '6rem' }}>
+                        <div className='titulo container justify-content-center align-items-center d-flex'>Disponibilidad </div>
+                        <div className='titulo container justify-content-center align-items-center'>
+                          <label htmlFor={`disponibilidad_${index}`} className='sr-only' />
+                          <textarea
+                            id={`disponibilidad_${index}`}
+                            name={`disponibilidad_${index}`}
+                            className='textoarea'
+                            value={oferta.disponibilidad}
+                            onChange={(e) => cambiarDisponibilidad(e, index)}
+                          />
+                        </div>
+                      </div>
+
+                    </TableCell>
+                    <TableCell>
+                      <div className='container ' style={{ width: '10rem' }}>
+                        <div className='col interior ' style={{ height: '6rem' }}>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>Nota mínima</div>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>
+                            <label htmlFor={`nota_mini_${index}`} className='sr-only' />
+                            <TextField
+                              id={`nota_mini_${index}`}
+                              name={`nota_mini_${index}`}
+                              style={{ backgroundColor: 'white' }}
+                              type='number'
+                              value={oferta.nota_mini}
+                              onChange={(e) => cambiarNota(e, index)}
+                              onClick={(e) => { e.stopPropagation() }}
+                              variant='outlined'
+                              size='small'
+                              inputProps={{ min: 0 }}
                             />
                           </div>
                         </div>
-
-                      </TableCell>
+                      </div>
+                    </TableCell>
                     <TableCell>
-                        <div className='container ' style={{ width: '10rem' }}>
-                          <div className='col interior ' style={{ height: '6rem' }}>
-                            <div className='titulo container justify-content-center align-items-center d-flex'>Nota mínima</div>
-                            <div className='titulo container justify-content-center align-items-center d-flex'>
-                              <label htmlFor={`nota_mini_${index}`} className='sr-only' />
-                              <TextField
-                                id={`nota_mini_${index}`}
-                                name={`nota_mini_${index}`}
-                                style={{ backgroundColor: 'white' }}
-                                type='number'
-                                value={oferta.nota_mini}
-                                onChange={(e) => cambiarNota(e, index)}
-                                onClick={(e) => { e.stopPropagation() }}
-                                variant='outlined'
-                                size='small'
-                                inputProps={{ min: 0 }}
-                              />
-                            </div>
+                      <div className='container '>
+                        <div className='col interior' style={{ height: '6rem' }}>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>Tareas</div>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>
+                            <label htmlFor={`tareas_${index}`} className='sr-only' />
+                            <textarea
+                              id={`tareas_${index}`}
+                              name={`tareas_${index}`}
+                              className='textoarea'
+                              value={oferta.tareas}
+                              onChange={(e) => cambiarTareas(e, index)}
+                            />
                           </div>
                         </div>
-                      </TableCell>
+                      </div>
+                    </TableCell>
                     <TableCell>
-                        <div className='container '>
-                          <div className='col interior' style={{ height: '6rem' }}>
-                            <div className='titulo container justify-content-center align-items-center d-flex'>Tareas</div>
-                            <div className='titulo container justify-content-center align-items-center d-flex'>
-                              <label htmlFor={`tareas_${index}`} className='sr-only' />
-                              <textarea
-                                id={`tareas_${index}`}
-                                name={`tareas_${index}`}
-                                className='textoarea'
-                                value={oferta.tareas}
-                                onChange={(e) => cambiarTareas(e, index)}
-                              />
-                            </div>
+                      <div className='container '>
+                        <div className='col interior' style={{ height: '6rem' }}>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>Otros</div>
+                          <div className='titulo container justify-content-center align-items-center d-flex'>
+                            <label htmlFor={`otros_${index}`} className='sr-only' />
+                            <textarea
+                              id={`otros_${index}`}
+                              name={`otros_${index}`}
+                              className='textoarea'
+                              value={oferta.otros}
+                              onChange={(e) => cambiarOtros(e, index)}
+                            />
                           </div>
                         </div>
-                      </TableCell>
-                    <TableCell>
-                        <div className='container '>
-                          <div className='col interior' style={{ height: '6rem' }}>
-                            <div className='titulo container justify-content-center align-items-center d-flex'>Otros</div>
-                            <div className='titulo container justify-content-center align-items-center d-flex'>
-                              <label htmlFor={`otros_${index}`} className='sr-only' />
-                              <textarea
-                                id={`otros_${index}`}
-                                name={`otros_${index}`}
-                                className='textoarea'
-                                value={oferta.otros}
-                                onChange={(e) => cambiarOtros(e, index)}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 </>
               )}
@@ -404,7 +454,7 @@ export default function Row ({ modulo }) {
           </Button>
         </Modal.Footer>
       </Modal>
-
+      <ToastContainer closeOnClick />
     </>
   )
 }

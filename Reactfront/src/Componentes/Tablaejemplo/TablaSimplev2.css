@@ -31,7 +31,7 @@
 }
 
 .btn-amarillo {
-  background-color: #0a6dca ;
+  background-color: #ca4d0a ;
   color: white ;
   margin: 0.5rem;
   width: 9.5rem; /* Ancho del botón */
@@ -40,11 +40,11 @@
   align-items: center; /* Centrar verticalmente */
   justify-content: center; /* Centrar horizontalmente */
   text-align: center; 
-  border-color:#0a6dca ;
+  border-color: #ca4d0a ;
 }
 
 .btn-amarillo:hover {
-  background-color: #0c29eb ; /* Un color amarillo más oscuro para el hover */
+  background-color:  #e75f15 ; /* Un color amarillo más oscuro para el hover */
   color: white ;
 }
 

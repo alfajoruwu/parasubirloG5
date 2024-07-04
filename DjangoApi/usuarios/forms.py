@@ -115,8 +115,11 @@ class UserCreationFormProfesor(forms.ModelForm):
         uid = urlsafe_base64_encode(force_bytes(profesor.pk))
         url = f"{settings.FRONTEND_URL}/reset/{uid}/{token}/"
         message = (
-            f"Hi {profesor.run},\nClick the link below to reset your password:\n{url}"
+            f"Hola {profesor.nombre_completo},\n\n"
+            "Hemos recibido una solicitud para recuperar tu contraseña.\n"
+            f"Si no has solicitado esto, ignora este mensaje.\n\n"
+            f"Para recuperar tu contraseña, visita el siguiente enlace:\n{url}\n\n"
+            "Gracias,\n"
+            "Este es un mensaje automático, por favor no respondas a este correo.\n"
         )
-        print("Sending email to:", profesor.email)
-        print("Message:", message)
-        enviar_correo(profesor.email, "Password reset request", message)
+        enviar_correo(profesor.email, "Solicitud para recuperar contraseña", message)

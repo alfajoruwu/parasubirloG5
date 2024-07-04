@@ -103,6 +103,7 @@ const Resolucion = () => {
             const proceso = procesos.find((proceso) => proceso.id === procesoSeleccionado)
             row.CantidadMes = proceso.n_meses
             row.PagoMensual = `$${proceso.precio * row.HorasMensuales}`
+            row.Proceso = procesoSeleccionado
           }
           return row
         })

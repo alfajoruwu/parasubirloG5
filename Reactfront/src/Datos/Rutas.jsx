@@ -19,6 +19,7 @@ import Extras from '../Paginas/Coordinador/AyudantesPag/Extras'
 import ListaProfesores from '../Paginas/Coordinador/ListaProfesores'
 import PasswordReset from '../Paginas/Login/PasswordReset'
 import PasswordResetRequest from '../Paginas/Login/ResetRequest'
+import ProtectedRoute from '../utils/ProtectedRoute'
 
 export const Rutas = () => {
   return (
@@ -26,25 +27,33 @@ export const Rutas = () => {
       <Routes>
         {/* Añadir rutas de componentes */}
         <Route exact path='/' element={<Login />} />
-        <Route path='/HorasAsignadas' element={<HorasAsignadas />} />
         <Route path='/Buscador' element={<Buscador />} />
-        <Route path='/Difusion' element={<Difusion />} />
-        <Route path='/Resolucion' element={<Resolucion />} />
-        <Route path='/ListaProfesores' element={<ListaProfesores />} />
 
         {/* Profesor */}
-        <Route path='/DatosProfesor' element={<DatosProfesor />} />
-        <Route path='/VerPostulantes' element={<VerPostulantes />} />
-        <Route path='/Postulantes/:oferta' element={<Postulantes />} />
-        <Route path='/PublicarAyudantias' element={<PublicarAyudantias />} />
-        <Route path='/Ayudantes' element={<InfAlumno />} />
-        <Route path='/DatosCuenta' element={<DatosCuenta />} />
-        <Route path='/Extras' element={<Extras />} />
+        <Route element={<ProtectedRoute tipoDeUsuario='Profesor' />}>
+          <Route path='/DatosProfesor' element={<DatosProfesor />} />
+          <Route path='/VerPostulantes' element={<VerPostulantes />} />
+          <Route path='/Postulantes/:oferta' element={<Postulantes />} />
+          <Route path='/PublicarAyudantias' element={<PublicarAyudantias />} />
+        </Route>
+
+        {/* Coordinador */}
+        <Route element={<ProtectedRoute tipoDeUsuario='Coordinador' />}>
+          <Route path='/ListaProfesores' element={<ListaProfesores />} />
+          <Route path='/Resolucion' element={<Resolucion />} />
+          <Route path='/Difusion' element={<Difusion />} />
+          <Route path='/HorasAsignadas' element={<HorasAsignadas />} />
+          <Route path='/Ayudantes' element={<InfAlumno />} />
+          <Route path='/DatosCuenta' element={<DatosCuenta />} />
+          <Route path='/Extras' element={<Extras />} />
+        </Route>
 
         {/* Estudiante */}
-        <Route path='/OfertasAyudantias' element={<OfertasAyudantias />} />
-        <Route path='/Resultados' element={<Resultados />} />
-        <Route path='/DatosPersonales' element={<DatosPersonales />} />
+        <Route element={<ProtectedRoute tipoDeUsuario='Estudiante' />}>
+          <Route path='/OfertasAyudantias' element={<OfertasAyudantias />} />
+          <Route path='/Resultados' element={<Resultados />} />
+          <Route path='/DatosPersonales' element={<DatosPersonales />} />
+        </Route>
 
         {/* Reseteo de contraseña */}
         <Route path='/reset/:uid/:token' element={<PasswordReset />} />
